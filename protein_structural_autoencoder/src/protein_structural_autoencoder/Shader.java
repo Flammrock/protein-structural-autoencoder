@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.joml.Vector3f;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -12,6 +14,7 @@ public class Shader {
 	private int vertexShader, fragmentShader, program;
 	
 	private int uniMatProjection, uniMatTransformWorld, uniMatTransformObject;
+	private int lightPos, lightColor;
 	
 	public Shader() {}
 	
@@ -57,6 +60,8 @@ public class Shader {
 		uniMatProjection = glGetUniformLocation(program, "cameraProjection");
 		uniMatTransformWorld = glGetUniformLocation(program, "transformWorld");
 		uniMatTransformObject = glGetUniformLocation(program, "transformObject");
+		lightPos = glGetUniformLocation(program, "lightPos");
+		lightColor = glGetUniformLocation(program, "lightColor");
 		
 		return true;
 	}
@@ -92,6 +97,13 @@ public class Shader {
 			transform.getTransformation().get(matrix);
 			glUniformMatrix4fv(uniMatTransformObject, false, matrix);
 		}
+	}
+	
+	public void setLight(Vector3f pos, Vector3f col) {
+		float vpos[] = new float[]{pos.x,pos.y,pos.z};
+		float vcol[] = new float[]{col.x,col.y,col.z};
+		glUniform3fv(lightPos, vpos);
+		glUniform3fv(lightColor, vcol);
 	}
 	
 	private String readSource(String file) {

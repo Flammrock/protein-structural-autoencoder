@@ -21,11 +21,13 @@ public class Window {
     private long window;
     private ImGuiLayer imguiLayer;
     private Shader shader;
+    private Camera camera;
 	
 	public Window(int width, int height, String title) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
+		this.camera = new Camera();
 	}
 	
 	public void run() {
@@ -63,7 +65,8 @@ public class Window {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		
-		
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 		
 		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(window, (videoMode.width() - 640)/2, (videoMode.height() - 480)/2);
@@ -113,37 +116,56 @@ public class Window {
         
         glClearColor(0.0f,0.0f,0.0f,1.0f);
         
+        Sphere testsphere = new Sphere(new Vector3f(1,0,0));
+        Sphere testsphere2 = new Sphere(new Vector3f(0,0,1));
+        
         Mesh testMesh = new Mesh();
 		testMesh.create(new float[] {
-			-1,-1,0, 1,0,0,
-			0,1,0, 0,1,0,
-			1,-1,0, 0,0,1
-		});
+				
+				-0.5f, 0.5f, 0.0f, 1,0,0,
+				-0.5f, -0.5f, 0.0f,  0,1,0,
+				0.5f, -0.5f, 0.0f,   0,0,1,
+				0.5f, 0.5f, 0.0f,    1,1,0
+		},new int[]{
+				0, 1, 3,
+                3, 1, 2
+	    });
 		
-		Camera camera = new Camera();
+		
 		Transform transform = new Transform();
+		Transform transform2 = new Transform();
 
-		camera.setPerspective((float)Math.toRadians(70), 640.0f / 480.0f, 0.01f, 1000.0f);
-		camera.setPosition(new Vector3f(0, 1, 3));
+		camera.setPerspective((float)Math.toRadians(10), 640.0f / 480.0f, 0.01f, 1000.0f);
+		camera.setPosition(new Vector3f(0, 5, 20));
 		camera.setRotation(new Quaternionf(new AxisAngle4f((float)Math.toRadians(-30), new Vector3f(1,0,0))));
 		
 		float x = 0.0f;
 		
+		
+		
         while (!glfwWindowShouldClose(window)) {
         	
             glfwPollEvents();
-
             
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
+            glViewport(0, 0, width, height);
+            camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 1000.0f);
             
             x++;
             transform.setPosition(new Vector3f((float)Math.sin(Math.toRadians(x)),0,0));
             transform.getRotation().rotateAxis((float)Math.toRadians(1), 0, 1, 0);
+            transform2.setPosition(new Vector3f(5,(float)Math.sin(Math.toRadians(x)),5));
+            transform2.getRotation().rotateAxis((float)Math.toRadians(1), 0, 1, 0);
             
             shader.useShader();
             shader.setCamera(camera);
             shader.setTransform(transform);
-			testMesh.draw();
+            shader.setLight(new Vector3f(4,0,0),new Vector3f(1,1,1));
+            testsphere.getMesh().draw();
+            
+            shader.setTransform(transform2);
+            testsphere2.getMesh().draw();
 
             if (dt >= 0) {
                 //currentScene.update(dt);
