@@ -4,7 +4,8 @@ public class App {
 
 	public static void main(String[] args) {
 		
-		System.out.println("hello world");
+		Window myWindow = new Window(640,480,"Protein Structure Autoencoder");
+		myWindow.run();
 
 	}
 
