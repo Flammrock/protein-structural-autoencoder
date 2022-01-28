@@ -1,4 +1,4 @@
-package protein_structural_autoencoder;
+package Display;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -9,24 +9,36 @@ import org.joml.Vector3f;
 
 public class Mesh {
 	
-	private static int VERTEX_SIZE = 9;
+	public static int VERTEX_SIZE = 9;
 
 	private int vertexArrayObject;
 	private int vertexBufferObject;
 	private int vertexBufferObjectIndices;
 	
-	private int vertexCount;
 	private int indexCount;
 	
+	private boolean isDestroyState;
+	private boolean isCreatedState;
 	
-	public Mesh() {
+	private Transform transform;
+	
+	private float[] vertices;
+	private int[] indices;
+	
+	
+	public Mesh(Geometry geo, Material mat) {
+		this.isCreatedState = false;
+		this.isDestroyState = false;
+		this.transform = new Transform();
+		geo.setColor(mat.getColor());
+		this.vertices = computeNormal(geo.getVertices(), geo.getIndices());
+		this.indices = geo.getIndices();
 	}
 	
-	// TODO: list of triangles, compute normal for each face then each vertex
-	
-	public boolean create(float raw_vertices[], int indices[]) {
+	public boolean create() {
 		
-		float[] vertices = computeNormal(raw_vertices, indices);
+		if (isCreatedState) return false;
+		if (this.isDestroy()) return false;
 		
 		vertexArrayObject = glGenVertexArrays();
 		glBindVertexArray(vertexArrayObject);
@@ -45,8 +57,9 @@ public class Mesh {
 		
 		glBindVertexArray(0);
 		
-		vertexCount = vertices.length / Mesh.VERTEX_SIZE;
 		indexCount = indices.length;
+		
+		isCreatedState = true;
 		
 		return true;
 	}
@@ -89,13 +102,19 @@ public class Mesh {
 	}
 	
 	public void destroy() {
+		if (this.isDestroyState) return;
+		if (!this.isCreatedState) return;
 		glDeleteBuffers(vertexBufferObject);
 		glDeleteBuffers(vertexBufferObjectIndices);
 		glDeleteVertexArrays(vertexArrayObject);
+		this.isDestroyState = true;
 	}
 	
 	
 	public void draw() {
+		
+		if (this.isDestroy()) return;
+		
 		glBindVertexArray(vertexArrayObject);
 		
 		glEnableVertexAttribArray(0);
@@ -109,5 +128,17 @@ public class Mesh {
 		glDisableVertexAttribArray(0);
 		
 		glBindVertexArray(0);
+	}
+	
+	public Transform getTransform() {
+		return transform;
+	}
+
+	public void setPosition(Vector3f position) {
+		transform.setPosition(position);
+	}
+	
+	public boolean isDestroy() {
+		return isDestroyState;
 	}
 }

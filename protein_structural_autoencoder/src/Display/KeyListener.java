@@ -1,4 +1,4 @@
-package protein_structural_autoencoder;
+package Display;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;

@@ -1,4 +1,4 @@
-package protein_structural_autoencoder;
+package Display;
 
 import org.lwjgl.Version;
 
@@ -6,15 +6,14 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
+import java.util.Iterator;
+import java.util.function.Consumer;
+
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
 public class Window {
-	
-	private static boolean IS_GLFW_INIT = false;
 	
 	private int width, height;
     private String title;
@@ -22,14 +21,31 @@ public class Window {
     private ImGuiLayer imguiLayer;
     private Shader shader;
     private Camera camera;
+    private Scene scene;
+    private Consumer<Double> callback;
 	
 	public Window(int width, int height, String title) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
 		this.camera = new Camera();
+		this.scene = new Scene();
+		this.callback = null;
 	}
 	
+	public void setUpdateCallback(Consumer<Double> callback) {
+		this.callback = callback;
+	}
+	
+	public Scene getScene() {
+		return scene;
+	}
+	
+	public void setScene(Scene scene) {
+		this.scene = scene;
+	}
+	
+
 	public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -115,32 +131,11 @@ public class Window {
         float dt = -1.0f;
         
         glClearColor(0.0f,0.0f,0.0f,1.0f);
-        
-        Sphere testsphere = new Sphere(new Vector3f(1,0,0));
-        Sphere testsphere2 = new Sphere(new Vector3f(0,0,1));
-        
-        Mesh testMesh = new Mesh();
-		testMesh.create(new float[] {
-				
-				-0.5f, 0.5f, 0.0f, 1,0,0,
-				-0.5f, -0.5f, 0.0f,  0,1,0,
-				0.5f, -0.5f, 0.0f,   0,0,1,
-				0.5f, 0.5f, 0.0f,    1,1,0
-		},new int[]{
-				0, 1, 3,
-                3, 1, 2
-	    });
 		
 		
-		Transform transform = new Transform();
-		Transform transform2 = new Transform();
-
 		camera.setPerspective((float)Math.toRadians(10), 640.0f / 480.0f, 0.01f, 1000.0f);
-		camera.setPosition(new Vector3f(0, 5, 20));
-		camera.setRotation(new Quaternionf(new AxisAngle4f((float)Math.toRadians(-30), new Vector3f(1,0,0))));
-		
-		float x = 0.0f;
-		
+		camera.setPosition(new Vector3f(0, 0, 20));
+		//camera.setRotation(new Quaternionf(new AxisAngle4f((float)Math.toRadians(-1), new Vector3f(1,0,0))));
 		
 		
         while (!glfwWindowShouldClose(window)) {
@@ -152,23 +147,22 @@ public class Window {
             glViewport(0, 0, width, height);
             camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 1000.0f);
             
-            x++;
-            transform.setPosition(new Vector3f((float)Math.sin(Math.toRadians(x)),0,0));
-            transform.getRotation().rotateAxis((float)Math.toRadians(1), 0, 1, 0);
-            transform2.setPosition(new Vector3f(5,(float)Math.sin(Math.toRadians(x)),5));
-            transform2.getRotation().rotateAxis((float)Math.toRadians(1), 0, 1, 0);
-            
             shader.useShader();
             shader.setCamera(camera);
-            shader.setTransform(transform);
-            shader.setLight(new Vector3f(4,0,0),new Vector3f(1,1,1));
-            testsphere.getMesh().draw();
+            shader.setLight(new Vector3f(-4,0,4),new Vector3f(1,1,1));
             
-            shader.setTransform(transform2);
-            testsphere2.getMesh().draw();
-
+            Iterator<Mesh> it = scene.getMeshs().iterator();
+    		while (it.hasNext()) {
+    		    Mesh mesh = it.next();
+    		    mesh.create();
+    		    shader.setTransform(mesh.getTransform());
+    		    mesh.draw();
+    			if (mesh.isDestroy()) {
+    				it.remove();
+    			}
+    		}
             if (dt >= 0) {
-                //currentScene.update(dt);
+            	if (this.callback!=null) this.callback.accept((double)dt);
             }
 
             this.imguiLayer.update(dt);
@@ -177,13 +171,21 @@ public class Window {
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
+            
+            try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
         
-        testMesh.destroy();
+        this.imguiLayer.destroyImGui();
+        scene.destroy();
     }
+	
+	private static boolean IS_GLFW_INIT = false;
 
-	public void setup() {
-		
+	private void setup() {
 		if (Window.IS_GLFW_INIT) return;
 		
 		if (!glfwInit()) {

@@ -1,4 +1,4 @@
-package protein_structural_autoencoder;
+package Display;
 
 
 import imgui.*;
@@ -223,8 +223,7 @@ public class ImGuiLayer {
         imGuiGl3.renderDrawData(ImGui.getDrawData());
     }
 
-    // If you want to clean a room after yourself - do it by yourself
-    private void destroyImGui() {
+    public void destroyImGui() {
         imGuiGl3.dispose();
         ImGui.destroyContext();
     }

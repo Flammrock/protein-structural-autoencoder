@@ -1,4 +1,4 @@
-package protein_structural_autoencoder;
+package Display;
 
 import java.io.BufferedReader;
 import java.io.IOException;

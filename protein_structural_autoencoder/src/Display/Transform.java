@@ -1,36 +1,31 @@
-package protein_structural_autoencoder;
+package Display;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class Camera {
+public class Transform {
 
 	private Vector3f position;
 	private Quaternionf rotation;
-	private Matrix4f projection;
+	private Vector3f scale;
 	
-	public Camera() {
+	public Transform() {
 		position = new Vector3f();
 		rotation = new Quaternionf();
-		projection = new Matrix4f();
+		scale = new Vector3f(1);
 	}
 	
 	public Matrix4f getTransformation() {
 		Matrix4f matrix = new Matrix4f();
-		matrix.rotate(rotation.conjugate(new Quaternionf()));
-		matrix.translate(position.mul(-1, new Vector3f()));
+		matrix.translate(position);
+		matrix.rotate(rotation);
+		matrix.scale(scale);
 		return matrix;
 	}
+	
+	
 
-	public void setOrthographic(float left, float right, float top, float bottom) {
-		projection.setOrtho2D(left, right, bottom, top);
-	}
-	
-	public void setPerspective(float fov, float aspectRatio, float zNear, float zFar) {
-		projection.setPerspective(fov, aspectRatio, zNear, zFar);
-	}
-	
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -47,9 +42,14 @@ public class Camera {
 		this.rotation = rotation;
 	}
 
-	public Matrix4f getProjection() {
-		return projection;
+	public Vector3f getScale() {
+		return scale;
 	}
+
+	public void setScale(Vector3f scale) {
+		this.scale = scale;
+	}
+	
 	
 	
 }

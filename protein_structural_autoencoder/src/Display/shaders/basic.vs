@@ -15,8 +15,11 @@ out vec3 vertexColor;
 out vec3 vertexNormal;
 
 void main() {
-	gl_Position = cameraProjection * transformWorld * transformObject * vec4(position,1);
+
 	fragPos = vec3(transformObject * vec4(position, 1.0));
 	vertexColor = color;
-	vertexNormal = mat3(transpose(inverse(transformObject))) * normal; 
+	vertexNormal = mat3(transpose(inverse(transformObject))) * normal;
+
+	gl_Position = cameraProjection * transformWorld * transformObject * vec4(position, 1.0);
+	 
 }
