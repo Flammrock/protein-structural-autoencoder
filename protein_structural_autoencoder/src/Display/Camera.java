@@ -33,10 +33,18 @@ public class Camera {
 			depth -= cameraOffset;
 		else
 			depth += cameraOffset;
-		float vFOV = fov;
-		float h = (float) (2 * Math.tan(vFOV / 2) * Math.abs(depth));
+		float h = (float) (2.0f * Math.tan(fov / 2.0f) * Math.abs(depth));
 		float w = h * aspectRatio;
 		return new Vector2f(w, h);
+	}
+	
+	public void fitView(Container container) {
+		Vector3f objectSizes = container.getMax().sub(container.getMin()).add(container.getPosition());
+		float objectSize = Math.max(objectSizes.x, Math.max(objectSizes.y, objectSizes.z));
+		float cameraView = (float) (2.0f * Math.tan(0.5f * fov));
+		float distance = 0.5f * objectSize / cameraView;
+		distance += 0.5f * objectSize;
+		position = container.getCenter().add(container.getPosition()).sub(getForward().mul(distance));
 	}
 
 	public void setOrthographic(float left, float right, float top, float bottom) {
@@ -67,6 +75,10 @@ public class Camera {
 
 	public Matrix4f getProjection() {
 		return projection;
+	}
+	
+	public Vector3f getForward() {
+		return new Vector3f(0,0,-1).rotate(rotation).normalize();
 	}
 	
 	

@@ -29,6 +29,7 @@ public class Window {
 		this.height = height;
 		this.title = title;
 		this.camera = new Camera();
+		camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 100000.0f);
 		this.scene = new Scene();
 		this.callback = null;
 	}
@@ -45,6 +46,16 @@ public class Window {
 		this.scene = scene;
 	}
 	
+	
+	
+
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
 
 	public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -132,9 +143,7 @@ public class Window {
         
         glClearColor(0.0f,0.0f,0.0f,1.0f);
 		
-		
-		camera.setPerspective((float)Math.toRadians(10), 640.0f / 480.0f, 0.01f, 1000.0f);
-		camera.setPosition(new Vector3f(0, 0, 20));
+
 		//camera.setRotation(new Quaternionf(new AxisAngle4f((float)Math.toRadians(-1), new Vector3f(1,0,0))));
 		
 		
@@ -142,14 +151,20 @@ public class Window {
         	
             glfwPollEvents();
             
+            FrameBuffer fbo = new FrameBuffer();
+            fbo.bind();
+            Texture tex = new Texture(width,height);
+            tex.attach();
+            RenderBuffer rbo = new RenderBuffer(width,height);
+            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             glViewport(0, 0, width, height);
-            camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 1000.0f);
+            camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 100000.0f);
             
             shader.useShader();
             shader.setCamera(camera);
-            shader.setLight(new Vector3f(-4,0,4),new Vector3f(1,1,1));
+            shader.setLight(new Vector3f(-50,0,50),new Vector3f(1,1,1));
             
             Iterator<Mesh> it = scene.getMeshs().iterator();
     		while (it.hasNext()) {
@@ -164,9 +179,14 @@ public class Window {
             if (dt >= 0) {
             	if (this.callback!=null) this.callback.accept((double)dt);
             }
+            
+            fbo.unbind();
+            
 
-            this.imguiLayer.update(dt);
+            this.imguiLayer.update(dt,tex);
             glfwSwapBuffers(window);
+            
+            
 
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
@@ -177,6 +197,10 @@ public class Window {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+            
+            fbo.destroy();
+            tex.destroy();
+            rbo.destroy();
         }
         
         this.imguiLayer.destroyImGui();

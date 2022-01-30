@@ -51,5 +51,12 @@ public class Transform {
 	}
 	
 	
+	public void rotate(float angle, Vector3f axis, Vector3f origin) {
+		position.sub(origin);
+		position.rotateAxis(angle, axis.x, axis.y, axis.z);
+		position.add(origin);
+	}
+	
+	
 	
 }

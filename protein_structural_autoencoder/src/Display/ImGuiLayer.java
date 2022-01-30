@@ -6,6 +6,7 @@ import imgui.callback.ImStrConsumer;
 import imgui.callback.ImStrSupplier;
 import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
+import imgui.type.ImBoolean;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -35,6 +36,7 @@ public class ImGuiLayer {
 
         io.setIniFilename(null); // We don't want to save .ini file
         io.setConfigFlags(ImGuiConfigFlags.NavEnableKeyboard); // Navigation with keyboard
+        io.setConfigFlags(ImGuiConfigFlags.DockingEnable);
         io.setBackendFlags(ImGuiBackendFlags.HasMouseCursors); // Mouse cursors to display while resizing windows etc.
         io.setBackendPlatformName("imgui_java_impl_glfw");
 
@@ -184,12 +186,54 @@ public class ImGuiLayer {
         imGuiGl3.init("#version 330 core");
     }
 
-    public void update(float dt) {
+    public void update(float dt, Texture tex) {
         startFrame(dt);
 
         // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
         ImGui.newFrame();
-        ImGui.showDemoWindow();
+        
+        setupDockSpace();
+        
+        
+        
+		ImGui.begin("GameWindow");
+		{
+			ImGui.beginChild("GameRender");
+			ImVec2 wsize = ImGui.getWindowSize();
+			ImGui.image(tex.getID(), wsize.x, wsize.y, 0, 1, 1, 0);
+			ImGui.endChild();
+		}
+		ImGui.end();
+        
+        
+        //ImGui.setNextWindowDockID();
+        ImGui.begin("My first window");
+        
+        ImGui.text("Welcome to Protein Structural Autoencoder!");
+        
+        ImGui.end();
+        
+ImGui.begin("My first window2");
+        
+        ImGui.text("Welcome to Protein Structural Autoencoder!");
+        
+        ImGui.end();
+        
+ImGui.begin("My first window3");
+        
+        ImGui.text("Welcome to Protein Structural Autoencoder!");
+        
+        ImGui.end();
+        
+ImGui.begin("My first window4");
+        
+        ImGui.text("Welcome to Protein Structural Autoencoder!");
+        
+        ImGui.end();
+        
+        ImGui.end();
+        
+        //ImGui.showDemoWindow();
         ImGui.render();
 
         endFrame();
@@ -227,4 +271,32 @@ public class ImGuiLayer {
         imGuiGl3.dispose();
         ImGui.destroyContext();
     }
+    
+    private void setupDockSpace() {
+    	int windowFlags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoDocking;
+    	
+    	int[] winWidth = {0};
+        int[] winHeight = {0};
+    	glfwGetWindowSize(glfwWindow, winWidth, winHeight);
+    	
+    	ImGui.setNextWindowPos(0.0f,  0.0f, ImGuiCond.Always);
+    	ImGui.setNextWindowSize(winWidth[0], winHeight[0]);
+    	ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
+    	ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+    	
+    	windowFlags |=
+    			ImGuiWindowFlags.NoTitleBar |
+    			ImGuiWindowFlags.NoCollapse | 
+    			ImGuiWindowFlags.NoResize |
+    			ImGuiWindowFlags.NoMove |
+    			ImGuiWindowFlags.NoBringToFrontOnFocus |
+    			ImGuiWindowFlags.NoNavFocus;
+    	
+    	ImGui.begin("Dockspace", new ImBoolean(true), windowFlags);
+    	ImGui.popStyleVar(2);
+    	
+    	ImGui.dockSpace(ImGui.getID("Dockspace"));
+    	
+    }
+    
 }

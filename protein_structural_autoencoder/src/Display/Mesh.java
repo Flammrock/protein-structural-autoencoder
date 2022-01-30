@@ -138,6 +138,10 @@ public class Mesh {
 		transform.setPosition(position);
 	}
 	
+	public Vector3f getPosition() {
+		return transform.getPosition();
+	}
+	
 	public boolean isDestroy() {
 		return isDestroyState;
 	}
