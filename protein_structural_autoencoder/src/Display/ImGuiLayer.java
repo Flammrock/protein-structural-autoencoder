@@ -10,9 +10,12 @@ import imgui.type.ImBoolean;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.util.function.Consumer;
+
 public class ImGuiLayer {
 
     private long glfwWindow;
+    private boolean dockspaceInit;
 
     // Mouse cursors provided by GLFW
     private final long[] mouseCursors = new long[ImGuiMouseCursor.COUNT];
@@ -22,6 +25,7 @@ public class ImGuiLayer {
 
     public ImGuiLayer(long glfwWindow) {
         this.glfwWindow = glfwWindow;
+        this.dockspaceInit = false;
     }
 
     // Initialize Dear ImGui.
@@ -191,12 +195,9 @@ public class ImGuiLayer {
 
         // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
         ImGui.newFrame();
-        
-        setupDockSpace();
     }
     
     public void render() {
-    	ImGui.end();
         
         //ImGui.showDemoWindow();
         ImGui.render();
@@ -210,7 +211,7 @@ public class ImGuiLayer {
         // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
         ImGui.newFrame();
         
-        setupDockSpace();
+        //setupDockSpace();
         
         
         
@@ -283,7 +284,7 @@ ImGui.begin("My first window4");
         ImGui.destroyContext();
     }
     
-    private void setupDockSpace() {
+    public void setupDockSpace(Consumer<Integer> dockspaceBuilder) {
     	int windowFlags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoDocking;
     	
     	int[] winWidth = {0};
@@ -306,7 +307,14 @@ ImGui.begin("My first window4");
     	ImGui.begin("Dockspace", new ImBoolean(true), windowFlags);
     	ImGui.popStyleVar(2);
     	
-    	ImGui.dockSpace(ImGui.getID("Dockspace"));
+    	int id = ImGui.getID("Dockspace");
+    	
+    	if (!dockspaceInit) {
+    		dockspaceInit = true;
+    		dockspaceBuilder.accept(id);
+    	}
+    	
+    	ImGui.dockSpace(id);
     	
     }
     

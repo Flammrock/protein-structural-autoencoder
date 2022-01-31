@@ -10,6 +10,9 @@ import BioData.Atom;
 import Display.*;
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiCond;
+import imgui.flag.ImGuiDir;
+import imgui.type.ImInt;
 
 public class App extends Application {
 
@@ -18,12 +21,19 @@ public class App extends Application {
 	}
 	
 
-	Container container;
-	OffScreen offscreen;
-	Camera camera;
-	Scene scene;
+	Container container; // will contain all atom of the protein
+	OffScreen offscreen; // offscreen canvas to draw the protein
+	Camera camera;       // a camera to render the protein
+	Scene scene;         // a scene where the proteil will be drawn
 	
-	ImVec2 childSize;
+	/* Docking Area */
+	ImInt dockLeft;
+	ImInt dockCenter;
+	ImInt dockRight;
+	ImInt dockUp;
+	ImInt dockDown;
+	
+	ImVec2 childSize; // scene width,height (imgui child window)
 	
 	public App() {
 		super(640,480,"Protein Structural Autoencoder");
@@ -36,8 +46,10 @@ public class App extends Application {
 		window.run();
 	}
 	
+	@Override
 	public void onClose() {
-		
+		offscreen.destroy();
+		scene.destroy();
 	}
 	
 	@Override
@@ -88,7 +100,17 @@ public class App extends Application {
 		
 		window.imgGuiPrepare(deltaTime);
 		
-		ImGui.begin("GameWindow");
+		startDockSpace();
+		
+		ImGui.setNextWindowDockID(dockLeft.get(), ImGuiCond.Once);
+		ImGui.begin("Panel Left");
+		{
+			ImGui.text("Welcome to Protein Structural Autoencoder!");
+		}
+		ImGui.end();
+		
+		ImGui.setNextWindowDockID(dockCenter.get(), ImGuiCond.Once);
+		ImGui.begin("Scene");
 		{
 			ImGui.beginChild("GameRender");
 			childSize = ImGui.getWindowSize();
@@ -97,18 +119,62 @@ public class App extends Application {
 		}
 		ImGui.end();
 		
+		ImGui.setNextWindowDockID(dockRight.get(), ImGuiCond.Once);
+		ImGui.begin("Panel Right");
+		{
+			ImGui.text("Welcome to Protein Structural Autoencoder!");
+		}
+		ImGui.end();
+		
+		ImGui.setNextWindowDockID(dockUp.get(), ImGuiCond.Once);
+		ImGui.begin("Panel Up");
+		{
+			ImGui.text("Welcome to Protein Structural Autoencoder!");
+		}
+		ImGui.end();
+		
+		ImGui.setNextWindowDockID(dockDown.get(), ImGuiCond.Once);
+		ImGui.begin("Panel Down");
+		{
+			ImGui.text("Welcome to Protein Structural Autoencoder!");
+		}
+		ImGui.end();
+		
+		endDockSpace();
+		
 		window.imgGuiRender();
 		
 	}
 	
-	public void draw(Float deltaTime) {
+	private void draw(Float deltaTime) {
 		container.rotate((float)Math.toRadians(10*deltaTime), new Vector3f(0,1,0));
 		camera.resize((int)childSize.x, (int)childSize.y);
 		offscreen.resize((int)childSize.x, (int)childSize.y);
 		offscreen.bind();
 		scene.draw(camera);
 	}
-
+	
+	@Override
+	protected void buildDockSpace(int dockID) {
+		imgui.internal.ImGui.dockBuilderAddNode(dockID);
+		
+		dockLeft = new ImInt();
+		dockRight = new ImInt();
+		dockCenter = new ImInt();
+		dockDown = new ImInt();
+		dockUp = new ImInt();
+		
+		ImInt tmp = new ImInt();
+		ImInt tmp2 = new ImInt();
+		ImInt tmp3 = new ImInt();
+		
+		imgui.internal.ImGui.dockBuilderSplitNode(dockID, ImGuiDir.Left, 0.2f, dockLeft, tmp);
+		imgui.internal.ImGui.dockBuilderSplitNode(tmp.get(), ImGuiDir.Right, 0.2f, dockRight, tmp2);
+		imgui.internal.ImGui.dockBuilderSplitNode(tmp2.get(), ImGuiDir.Up, 0.08f, dockUp, tmp3);
+		imgui.internal.ImGui.dockBuilderSplitNode(tmp3.get(), ImGuiDir.Down, 0.08f, dockDown, dockCenter);
+		
+		imgui.internal.ImGui.dockBuilderFinish(dockID);
+	}
 
 
 }

@@ -1,5 +1,6 @@
 package Display;
 
+import imgui.ImGui;
 
 public abstract class Application {
 
@@ -21,4 +22,14 @@ public abstract class Application {
 	public abstract void onUpdate(Float deltaTime);
 	
 	public abstract void onClose();
+	
+	protected abstract void buildDockSpace(int dockID);
+	
+	protected void startDockSpace() {
+		window.setupDockSpace(this::buildDockSpace);
+	}
+	
+	protected void endDockSpace() {
+		ImGui.end();
+	}
 }

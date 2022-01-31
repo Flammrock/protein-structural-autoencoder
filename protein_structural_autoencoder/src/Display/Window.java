@@ -201,7 +201,10 @@ public class Window {
 	    }
 	}
 	
-
+	public void setupDockSpace(Consumer<Integer> dockspaceBuilder) {
+		this.imguiLayer.setupDockSpace(dockspaceBuilder);
+	}
+	
 	public void registerStart(Runnable onstart) {
 		this.onstart = onstart;
 	}
