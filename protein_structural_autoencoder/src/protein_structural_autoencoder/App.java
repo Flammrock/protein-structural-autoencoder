@@ -7,40 +7,47 @@ import java.util.stream.Stream;
 import org.joml.Vector3f;
 
 import BioData.Atom;
-import Display.Container;
-import Display.Material;
-import Display.Mesh;
-import Display.SphereGeometry;
-import Display.Window;
+import Display.*;
+import imgui.ImGui;
+import imgui.ImVec2;
 
-public class App {
+public class App extends Application {
 
 	public static void main(String[] args) {
-		App app = new App();
-		app.start();
+		new App();
 	}
 	
-	float x;
+
+	Container container;
+	OffScreen offscreen;
+	Camera camera;
+	Scene scene;
 	
-	App() {
-		this.x = 0;
+	ImVec2 childSize;
+	
+	public App() {
+		super(640,480,"Protein Structural Autoencoder");
+
+		offscreen = new OffScreen();
+		camera = new PerspectiveCamera(60.0f, 640, 480);
+		scene = new Scene();
+		container = new Container();
+		
+		window.run();
 	}
 	
-	void start() {
-		SphereGeometry testsphere = new SphereGeometry(1.0f, 64, 128);
-        SphereGeometry testsphere2 = new SphereGeometry(2.0f, 64, 128);
-        Mesh spheremesh = new Mesh(testsphere, new Material(new Vector3f(1,0,0)));
-        Mesh spheremesh2 = new Mesh(testsphere2, new Material(new Vector3f(0,0,1)));
-        
-        spheremesh.setPosition(new Vector3f(0,0,-15));
-        spheremesh2.setPosition(new Vector3f(10,0,-15));
-        
-        
-        
-        Container container = new Container();
+	public void onClose() {
 		
-		Window myWindow = new Window(640,480,"Protein Structure Autoencoder");
+	}
+	
+	@Override
+	public void onInit() {
 		
+		scene.useShader(getShader());
+ 
+        
+		
+
 		Stream<Atom> atoms = Atom.loadFromFile("data.txt");
 		List<Atom> atomss = atoms.collect(Collectors.toList());
 		
@@ -62,35 +69,46 @@ public class App {
 			}
         	Mesh spheremesh3 = new Mesh(testsphere3, new Material(color));
         	spheremesh3.setPosition(atom.getPosition());
-        	myWindow.getScene().add(spheremesh3);
+        	scene.add(spheremesh3);
         	container.add(spheremesh3);
 		}
 		
-		System.out.println("min = "+container.getMin());
-		System.out.println("max = "+container.getMax());
-		System.out.println("cen = "+container.getCenter());
 
-		//myWindow.getCamera().fitView(container);
-		//myWindow.getScene().add(spheremesh);
-		//myWindow.getScene().add(spheremesh2);
-		
-		//myWindow.getCamera().fitView(container);
-		myWindow.getCamera().setPosition(new Vector3f(0,0,20));
-		
-		//myWindow.getCamera().fitView(container);
-		
-		System.out.println("pos = "+myWindow.getCamera().getPosition());
-		//container.translate(new Vector3f(0,0,-50));
+		camera.setPosition(new Vector3f(0,0,20));
 
-		myWindow.setUpdateCallback((dt) -> {
-			x+=0.1f;
-			container.rotate((float)Math.toRadians(10*dt), new Vector3f(0,1,0));
-			//myWindow.getCamera().getPosition().add(myWindow.getCamera().getForward().mul(0.1f));
-			//spheremesh.setPosition(new Vector3f(0,(float)(4*Math.sin(Math.toRadians(x))),-15));
-			//spheremesh2.setPosition(new Vector3f(10+(float)(6*Math.sin(Math.toRadians(x))),0,-15+(float)(15*Math.cos(Math.toRadians(x)))));
-		});
-		
-		myWindow.run();
+
 	}
+
+	@Override
+	public void onUpdate(Float deltaTime) {
+
+		if (deltaTime >= 0) this.draw(deltaTime);
+		
+		offscreen.unbind();
+		
+		window.imgGuiPrepare(deltaTime);
+		
+		ImGui.begin("GameWindow");
+		{
+			ImGui.beginChild("GameRender");
+			childSize = ImGui.getWindowSize();
+			if (offscreen.hasTexture()) ImGui.image(offscreen.getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
+			ImGui.endChild();
+		}
+		ImGui.end();
+		
+		window.imgGuiRender();
+		
+	}
+	
+	public void draw(Float deltaTime) {
+		container.rotate((float)Math.toRadians(10*deltaTime), new Vector3f(0,1,0));
+		camera.resize((int)childSize.x, (int)childSize.y);
+		offscreen.resize((int)childSize.x, (int)childSize.y);
+		offscreen.bind();
+		scene.draw(camera);
+	}
+
+
 
 }

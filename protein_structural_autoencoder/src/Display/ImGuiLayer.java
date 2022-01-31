@@ -185,6 +185,24 @@ public class ImGuiLayer {
         // ImGui context should be created as well.
         imGuiGl3.init("#version 330 core");
     }
+    
+    public void prepare(float dt) {
+    	startFrame(dt);
+
+        // Any Dear ImGui code SHOULD go between ImGui.newFrame()/ImGui.render() methods
+        ImGui.newFrame();
+        
+        setupDockSpace();
+    }
+    
+    public void render() {
+    	ImGui.end();
+        
+        //ImGui.showDemoWindow();
+        ImGui.render();
+
+        endFrame();
+    }
 
     public void update(float dt, Texture tex) {
         startFrame(dt);
@@ -196,14 +214,7 @@ public class ImGuiLayer {
         
         
         
-		ImGui.begin("GameWindow");
-		{
-			ImGui.beginChild("GameRender");
-			ImVec2 wsize = ImGui.getWindowSize();
-			ImGui.image(tex.getID(), wsize.x, wsize.y, 0, 1, 1, 0);
-			ImGui.endChild();
-		}
-		ImGui.end();
+		
         
         
         //ImGui.setNextWindowDockID();

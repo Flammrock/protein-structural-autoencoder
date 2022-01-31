@@ -11,15 +11,31 @@ public class Camera {
 	private Quaternionf rotation;
 	private Matrix4f projection;
 	
-	float fov;
-	float aspectRatio;
+	private float fov;
+	private float aspectRatio;
+	private int width;
+	private int height;
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
+	
+	public void resize(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+
 	
 	public Camera() {
 		position = new Vector3f();
 		rotation = new Quaternionf();
 		projection = new Matrix4f();
 	}
-	
+
 	public Matrix4f getTransformation() {
 		Matrix4f matrix = new Matrix4f();
 		matrix.rotate(rotation.conjugate(new Quaternionf()));
@@ -51,9 +67,11 @@ public class Camera {
 		projection.setOrtho2D(left, right, bottom, top);
 	}
 	
-	public void setPerspective(float fov, float aspectRatio, float zNear, float zFar) {
+	public void setPerspective(float fov, int width, int height, float zNear, float zFar) {
 		this.fov = fov;
-		this.aspectRatio = aspectRatio;
+		this.aspectRatio = (float)width / (float)height;
+		this.width = width;
+		this.height = height;
 		projection.setPerspective(fov, aspectRatio, zNear, zFar);
 	}
 	

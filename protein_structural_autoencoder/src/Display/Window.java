@@ -6,10 +6,7 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import java.util.Iterator;
 import java.util.function.Consumer;
-
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -20,56 +17,60 @@ public class Window {
     private long window;
     private ImGuiLayer imguiLayer;
     private Shader shader;
-    private Camera camera;
-    private Scene scene;
-    private Consumer<Double> callback;
+    
+    private Consumer<Float> onloop;
+    private Runnable onstart;
+    private Runnable onclose;
+    
+    private long variableYieldTime, lastTime;
 	
 	public Window(int width, int height, String title) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
-		this.camera = new Camera();
-		camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 100000.0f);
-		this.scene = new Scene();
-		this.callback = null;
+		this.onstart = null;
+		this.onloop = null;
+		this.onclose = null;
 	}
 	
-	public void setUpdateCallback(Consumer<Double> callback) {
-		this.callback = callback;
-	}
-	
-	public Scene getScene() {
-		return scene;
-	}
-	
-	public void setScene(Scene scene) {
-		this.scene = scene;
-	}
-	
-	
-	
-
-	public Camera getCamera() {
-		return camera;
+	public int getWidth() {
+		return width;
 	}
 
-	public void setCamera(Camera camera) {
-		this.camera = camera;
+	public int getHeight() {
+		return height;
+	}
+	
+	public Shader getShader() {
+		return shader;
 	}
 
+
+
+	public String getTitle() {
+		return title;
+	}
+	
 	public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-
         init();
         loop();
-
-
-        glfwFreeCallbacks(window);
+        destroy();
+    }
+	
+	private void destroy() {
+		glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-
         shader.destroy();
         glfwTerminate();
-    }
+	}
+	
+	public void imgGuiPrepare(float dt) {
+		this.imguiLayer.prepare(dt);
+	}
+	
+	public void imgGuiRender() {
+		this.imguiLayer.render();
+	}
 	
 	public boolean init() {
 		this.setup();
@@ -108,30 +109,8 @@ public class Window {
 		
 		this.imguiLayer = new ImGuiLayer(window);
         this.imguiLayer.initImGui();
-		
-		/*Mesh testMesh = new Mesh();
-		testMesh.create(new float[] {
-				-1,-1,0,
-				0,1,0,
-				1,-1,0
-		});
-		
-		
-		while (!glfwWindowShouldClose(window)) {
-			glfwPollEvents();
-			
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			shader.useShader();
-			testMesh.draw();
-			
-			glfwSwapBuffers(window);
-		}
-		
-		testMesh.destroy();
-		shader.destroy();
-		
-		glfwTerminate();*/
+        
+        if (this.onstart!=null) this.onstart.run();
 		
 		return true;
 	}
@@ -143,68 +122,24 @@ public class Window {
         
         glClearColor(0.0f,0.0f,0.0f,1.0f);
 		
-
-		//camera.setRotation(new Quaternionf(new AxisAngle4f((float)Math.toRadians(-1), new Vector3f(1,0,0))));
-		
-		
         while (!glfwWindowShouldClose(window)) {
         	
             glfwPollEvents();
             
-            FrameBuffer fbo = new FrameBuffer();
-            fbo.bind();
-            Texture tex = new Texture(width,height);
-            tex.attach();
-            RenderBuffer rbo = new RenderBuffer(width,height);
-            
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            glViewport(0, 0, width, height);
-            camera.setPerspective((float)Math.toRadians(60), (float)width / (float)height, 0.01f, 100000.0f);
-            
-            shader.useShader();
-            shader.setCamera(camera);
-            shader.setLight(new Vector3f(-50,0,50),new Vector3f(1,1,1));
-            
-            Iterator<Mesh> it = scene.getMeshs().iterator();
-    		while (it.hasNext()) {
-    		    Mesh mesh = it.next();
-    		    mesh.create();
-    		    shader.setTransform(mesh.getTransform());
-    		    mesh.draw();
-    			if (mesh.isDestroy()) {
-    				it.remove();
-    			}
-    		}
-            if (dt >= 0) {
-            	if (this.callback!=null) this.callback.accept((double)dt);
-            }
-            
-            fbo.unbind();
-            
+            if (this.onloop!=null) this.onloop.accept(dt);
 
-            this.imguiLayer.update(dt,tex);
             glfwSwapBuffers(window);
             
-            
-
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
             
-            try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            sync(30);
             
-            fbo.destroy();
-            tex.destroy();
-            rbo.destroy();
         }
         
         this.imguiLayer.destroyImGui();
-        scene.destroy();
+        if (this.onclose!=null) this.onclose.run();
     }
 	
 	private static boolean IS_GLFW_INIT = false;
@@ -226,5 +161,59 @@ public class Window {
 		
 		Window.IS_GLFW_INIT = true;
 	}
+	
+	private void sync(int fps) {
+	    if (fps <= 0) return;
+	     
+	    long sleepTime = 1000000000 / fps; // nanoseconds to sleep this frame
+	    // yieldTime + remainder micro & nano seconds if smaller than sleepTime
+	    long yieldTime = Math.min(sleepTime, variableYieldTime + sleepTime % (1000*1000));
+	    long overSleep = 0; // time the sync goes over by
+	     
+	    try {
+	        while (true) {
+	            long t = System.nanoTime() - lastTime;
+	             
+	            if (t < sleepTime - yieldTime) {
+	                Thread.sleep(1);
+	            }else if (t < sleepTime) {
+	                // burn the last few CPU cycles to ensure accuracy
+	                Thread.yield();
+	            }else {
+	                overSleep = t - sleepTime;
+	                break; // exit while loop
+	            }
+	        }
+	    } catch (InterruptedException e) {
+	        e.printStackTrace();
+	    }finally{
+	        lastTime = System.nanoTime() - Math.min(overSleep, sleepTime);
+	       
+	        // auto tune the time sync should yield
+	        if (overSleep > variableYieldTime) {
+	            // increase by 200 microseconds (1/5 a ms)
+	            variableYieldTime = Math.min(variableYieldTime + 200*1000, sleepTime);
+	        }
+	        else if (overSleep < variableYieldTime - 200*1000) {
+	            // decrease by 2 microseconds
+	            variableYieldTime = Math.max(variableYieldTime - 2*1000, 0);
+	        }
+	    }
+	}
+	
+
+	public void registerStart(Runnable onstart) {
+		this.onstart = onstart;
+	}
+	
+	public void registerLoop(Consumer<Float> onloop) {
+		this.onloop = onloop;
+	}
+	
+	
+	public void registerClose(Runnable onclose) {
+		this.onclose = onclose;
+	}
+
 	
 }
