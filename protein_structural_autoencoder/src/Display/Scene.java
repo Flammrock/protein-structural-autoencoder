@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Scene {
@@ -36,6 +37,7 @@ public class Scene {
 	public Texture getTexture() {
 		return offscreen.getTexture();
 	}
+	
 	
 	public void resize(Number width, Number height) {
 		getCamera().resize(width.intValue(), height.intValue());
@@ -79,6 +81,7 @@ public class Scene {
 		Shader usedShader = shader==null ? Shader.SHADER : shader;
 		
 		Camera camera = cameraManager.getMainCamera();
+		
 		
 		if (useOffscreen) this.offscreen.bind();
 		

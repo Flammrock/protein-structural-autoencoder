@@ -15,6 +15,17 @@ import Display.SphereGeometry;
 public class Protein {
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* un peu le bordel x), ne pas toucher */
+	
 	static public Container buildMesh(List<Atom> atoms) {
 		Container container = new Container();
 		SphereGeometry testsphere3 = new SphereGeometry(0.5f, 8, 16);
