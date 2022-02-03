@@ -36,6 +36,10 @@ public class Container {
 	public void remove(Mesh mesh) {
 		this.meshs.remove(mesh);
 	}
+	
+	public List<Mesh> getMeshs() {
+		return meshs;
+	}
 
 	public Vector3f getMin() {
 		return minWindow;

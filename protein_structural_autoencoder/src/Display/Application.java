@@ -13,10 +13,6 @@ public abstract class Application {
 		window.registerClose(this::onClose);
 	}
 	
-	public Shader getShader() {
-		return window.getShader();
-	}
-	
 	public abstract void onInit();
 	
 	public abstract void onUpdate(Float deltaTime);

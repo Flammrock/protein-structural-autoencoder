@@ -10,15 +10,23 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
+	
+	public static Shader SHADER = new Shader();
 
 	private int vertexShader, fragmentShader, program;
 	
 	private int uniMatProjection, uniMatTransformWorld, uniMatTransformObject;
 	private int lightPos, lightColor;
 	
-	public Shader() {}
+	private boolean isCreate;
+	
+	public Shader() {
+		isCreate = false;
+	}
 	
 	public boolean create(String shader) {
+		
+		if (isCreate) destroy();
 		
 		int success;
 		
@@ -63,6 +71,8 @@ public class Shader {
 		lightPos = glGetUniformLocation(program, "lightPos");
 		lightColor = glGetUniformLocation(program, "lightColor");
 		
+		isCreate = true;
+		
 		return true;
 	}
 	
@@ -72,9 +82,11 @@ public class Shader {
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 		glDeleteProgram(program);
+		isCreate = false;
 	}
 	
 	public void useShader() {
+		if (!isCreate) throw new IllegalStateException("Shader::create() never called! A shader must be created before using it.");
 		glUseProgram(program);
 	}
 	

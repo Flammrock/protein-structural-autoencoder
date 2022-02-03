@@ -32,7 +32,7 @@ public class Atom {
 		tokens.pop();tokens.pop();String type = tokens.pop();
 		tokens.pop();tokens.pop();tokens.pop();
 		Vector3f pos = new Vector3f((float)Double.parseDouble(tokens.pop()),(float)Double.parseDouble(tokens.pop()),(float)Double.parseDouble(tokens.pop()));
-		System.out.println("type :"+type+", pos: "+pos.toString());
+		//System.out.println("type :"+type+", pos: "+pos.toString());
 		return new Atom(type,pos);
 	}
 

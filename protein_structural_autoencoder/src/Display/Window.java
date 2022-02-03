@@ -16,7 +16,6 @@ public class Window {
     private String title;
     private long window;
     private ImGuiLayer imguiLayer;
-    private Shader shader;
     
     private Consumer<Float> onloop;
     private Runnable onstart;
@@ -33,6 +32,10 @@ public class Window {
 		this.onclose = null;
 	}
 	
+	public void close() {
+		glfwSetWindowShouldClose(window, true);
+	}
+	
 	public int getWidth() {
 		return width;
 	}
@@ -41,10 +44,6 @@ public class Window {
 		return height;
 	}
 	
-	public Shader getShader() {
-		return shader;
-	}
-
 
 
 	public String getTitle() {
@@ -60,7 +59,6 @@ public class Window {
 	private void destroy() {
 		glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-        shader.destroy();
         glfwTerminate();
 	}
 	
@@ -96,16 +94,13 @@ public class Window {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 		
-		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(window, (videoMode.width() - 640)/2, (videoMode.height() - 480)/2);
+		//GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		//glfwSetWindowPos(window, (videoMode.width() - 640)/2, (videoMode.height() - 480)/2);
 		
         // Enable v-sync
         glfwSwapInterval(1);
 		
 		glfwShowWindow(window);
-		
-		shader = new Shader();
-		shader.create("basic");
 		
 		this.imguiLayer = new ImGuiLayer(window);
         this.imguiLayer.initImGui();
@@ -155,6 +150,7 @@ public class Window {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 		
 		
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);

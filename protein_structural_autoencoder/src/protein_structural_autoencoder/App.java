@@ -4,14 +4,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.joml.AxisAngle4f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import BioData.Atom;
+import BioData.Protein;
 import Display.*;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDir;
+import imgui.flag.ImGuiTreeNodeFlags;
+import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 
 public class App extends Application {
@@ -21,10 +27,9 @@ public class App extends Application {
 	}
 	
 
-	Container container; // will contain all atom of the protein
-	OffScreen offscreen; // offscreen canvas to draw the protein
-	Camera camera;       // a camera to render the protein
-	Scene scene;         // a scene where the proteil will be drawn
+	Container protein; // will contain all atom of the protein
+	Container proteinBackbone; // will contain all atom of the protein
+	SceneManager sceneManager;
 	
 	/* Docking Area */
 	ImInt dockLeft;
@@ -34,60 +39,51 @@ public class App extends Application {
 	ImInt dockDown;
 	
 	ImVec2 childSize; // scene width,height (imgui child window)
+	ImVec2 childSizeBackbone;
+	
+	
+	//Mesh cylinder;
+	float x = 0.0f;
 	
 	public App() {
 		super(640,480,"Protein Structural Autoencoder");
 
-		offscreen = new OffScreen();
-		camera = new PerspectiveCamera(60.0f, 640, 480);
-		scene = new Scene();
-		container = new Container();
+		
+		sceneManager = new SceneManager();
+		
+		protein = new Container();
+		proteinBackbone = new Container();
 		
 		window.run();
 	}
 	
 	@Override
 	public void onClose() {
-		offscreen.destroy();
-		scene.destroy();
+		sceneManager.destroy();
+		Shader.SHADER.destroy();
 	}
 	
+
 	@Override
 	public void onInit() {
+		Shader.SHADER.create("basic");
 		
-		scene.useShader(getShader());
- 
-        
-		
+		Scene sp = sceneManager.create("protein");
+		Scene sb = sceneManager.create("backbone");
 
 		Stream<Atom> atoms = Atom.loadFromFile("data.txt");
 		List<Atom> atomss = atoms.collect(Collectors.toList());
 		
-		SphereGeometry testsphere3 = new SphereGeometry(0.5f, 8, 16);
-		for (Atom atom : atomss) {
-			Vector3f color;
-			if (atom.getType().substring(0, 1).equals("H")) {
-				color = new Vector3f(1,1,1);
-			} else if (atom.getType().substring(0, 1).equals("C")) {
-				color = new Vector3f(0.3f,0.3f,0.3f);
-			} else if (atom.getType().substring(0, 1).equals("N")) {
-				color = new Vector3f(0,0,1);
-			} else if (atom.getType().substring(0, 1).equals("O")) {
-				color = new Vector3f(1,0,0);
-			} else if (atom.getType().substring(0, 1).equals("S")) {
-				color = new Vector3f(1,1,0);
-			} else {
-				color = new Vector3f(1,0,1);
-			}
-        	Mesh spheremesh3 = new Mesh(testsphere3, new Material(color));
-        	spheremesh3.setPosition(atom.getPosition());
-        	scene.add(spheremesh3);
-        	container.add(spheremesh3);
-		}
+		
+		protein = Protein.buildMesh(atomss);
+		proteinBackbone = Protein.buildMeshBackbone(atomss);
+		
+		sp.add(protein);
+		sb.add(proteinBackbone);
 		
 
-		camera.setPosition(new Vector3f(0,0,20));
-
+		sp.getCamera().setPosition(new Vector3f(5,8,50));
+		sb.getCamera().setPosition(new Vector3f(5,8,50));
 
 	}
 
@@ -95,48 +91,100 @@ public class App extends Application {
 	public void onUpdate(Float deltaTime) {
 
 		if (deltaTime >= 0) this.draw(deltaTime);
-		
-		offscreen.unbind();
-		
+
 		window.imgGuiPrepare(deltaTime);
+		
+		ImBoolean test = new ImBoolean(false),
+				test1 = new ImBoolean(false),
+				test2 = new ImBoolean(false),
+				test3 = new ImBoolean(false),
+				test4 = new ImBoolean(false),
+				test5 = new ImBoolean(false);
+
+		
+		// Menu
+	    if (ImGui.beginMainMenuBar()) {
+	        if (ImGui.beginMenu("File")) {
+	        	ImGui.menuItem("Open PDB File...", "CTRL+O");
+	        	ImGui.separator();
+	        	if (ImGui.menuItem("Quitter", null)) {
+	        		window.close();
+	        	}
+	            ImGui.endMenu();
+	        }
+	        if (ImGui.beginMenu("Examples")) {
+	            ImGui.menuItem("Main menu bar", null, test);
+	            ImGui.menuItem("Console", null, test1);
+	            ImGui.menuItem("Log", null, test2);
+	            ImGui.endMenu();
+	        }
+	        if (ImGui.beginMenu("Help")) {
+	            ImGui.menuItem("Metrics", null, test3);
+	            ImGui.menuItem("Style Editor", null, test4);
+	            ImGui.menuItem("About ImGui", null, test5);
+	            ImGui.endMenu();
+	        }
+	        ImGui.endMainMenuBar();
+	    }
 		
 		startDockSpace();
 		
 		ImGui.setNextWindowDockID(dockLeft.get(), ImGuiCond.Once);
-		ImGui.begin("Panel Left");
+		ImGui.begin("Navigation");
 		{
-			ImGui.text("Welcome to Protein Structural Autoencoder!");
+			ImGui.setNextItemOpen(true, ImGuiCond.Once);
+			if (ImGui.collapsingHeader("Database"))
+		    {
+				ImGui.setNextItemOpen(true, ImGuiCond.Once);
+				if (ImGui.treeNode("HOMSTRAD"))
+			    {
+					ImGui.button("Hello world");
+					ImGui.treePop();
+					
+			    }
+		    }
 		}
 		ImGui.end();
 		
 		ImGui.setNextWindowDockID(dockCenter.get(), ImGuiCond.Once);
-		ImGui.begin("Scene");
+		ImGui.begin("Protein View Scene");
 		{
 			ImGui.beginChild("GameRender");
 			childSize = ImGui.getWindowSize();
-			if (offscreen.hasTexture()) ImGui.image(offscreen.getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
+			if (sceneManager.get("protein").hasTexture()) ImGui.image(sceneManager.get("protein").getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
+			ImGui.endChild();
+		}
+		ImGui.end();
+		
+		ImGui.setNextWindowDockID(dockCenter.get(), ImGuiCond.Once);
+		ImGui.begin("Backbone View Scene");
+		{
+			ImGui.beginChild("GameRender2");
+			childSizeBackbone = ImGui.getWindowSize();
+			if (sceneManager.get("backbone").hasTexture()) ImGui.image(sceneManager.get("backbone").getTexture().getID(), childSizeBackbone.x, childSizeBackbone.y, 0, 1, 1, 0);
 			ImGui.endChild();
 		}
 		ImGui.end();
 		
 		ImGui.setNextWindowDockID(dockRight.get(), ImGuiCond.Once);
-		ImGui.begin("Panel Right");
+		ImGui.begin("View");
 		{
-			ImGui.text("Welcome to Protein Structural Autoencoder!");
+			ImGui.text("nothing");
 		}
 		ImGui.end();
 		
 		ImGui.setNextWindowDockID(dockUp.get(), ImGuiCond.Once);
-		ImGui.begin("Panel Up");
+		ImGui.begin("Welcome");
 		{
 			ImGui.text("Welcome to Protein Structural Autoencoder!");
+			ImGui.text("Coded by Lemmy Briot, Ahmed Chaudhry, Ameur Mahfoudi and Noa Weiss");
 		}
 		ImGui.end();
 		
 		ImGui.setNextWindowDockID(dockDown.get(), ImGuiCond.Once);
-		ImGui.begin("Panel Down");
+		ImGui.begin("Console");
 		{
-			ImGui.text("Welcome to Protein Structural Autoencoder!");
+			ImGui.text(">> v0.0.1 beta build 9845");
 		}
 		ImGui.end();
 		
@@ -146,12 +194,17 @@ public class App extends Application {
 		
 	}
 	
+	
+	
 	private void draw(Float deltaTime) {
-		container.rotate((float)Math.toRadians(10*deltaTime), new Vector3f(0,1,0));
-		camera.resize((int)childSize.x, (int)childSize.y);
-		offscreen.resize((int)childSize.x, (int)childSize.y);
-		offscreen.bind();
-		scene.draw(camera);
+		protein.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
+		proteinBackbone.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
+		//x+=(Math.PI/50.0f);
+		
+		sceneManager.get("protein").resize(childSize.x, childSize.y);
+		sceneManager.get("backbone").resize(childSizeBackbone.x, childSizeBackbone.y);
+		
+		sceneManager.draw();
 	}
 	
 	@Override
