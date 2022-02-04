@@ -13,6 +13,8 @@ public enum PDBAttribute {
 		.build()
 	);
 	
+	//test
+	
 	private PDBField field;
 	
 	private PDBAttribute(PDBField field) {
