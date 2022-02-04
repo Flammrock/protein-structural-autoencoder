@@ -255,15 +255,21 @@ ImGui.begin("My first window4");
         // Get window properties and mouse position
         int[] winWidth = {0};
         int[] winHeight = {0};
+        int[] frameWidth = {0};
+        int[] frameHeight = {0};
         double[] mousePosX = {0};
         double[] mousePosY = {0};
         glfwGetCursorPos(glfwWindow, mousePosX, mousePosY);
         glfwGetWindowSize(glfwWindow, winWidth, winHeight);
+       // glfwGetWindowContentScale(glfwWindow, frameWidth, frameHeight);
+        
+        glfwGetFramebufferSize(glfwWindow, frameWidth, frameHeight);
+        
 
         // We SHOULD call those methods to update Dear ImGui state for the current frame
         final ImGuiIO io = ImGui.getIO();
         io.setDisplaySize(winWidth[0], winHeight[0]);
-        io.setDisplayFramebufferScale(1f, 1f);
+        io.setDisplayFramebufferScale((float)winWidth[0]/(float)frameWidth[0], (float)winHeight[0]/(float)frameHeight[0]);
         io.setMousePos((float) mousePosX[0], (float) mousePosY[0]);
         io.setDeltaTime(deltaTime);
 
