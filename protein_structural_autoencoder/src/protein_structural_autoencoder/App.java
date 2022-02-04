@@ -30,7 +30,11 @@ public class App extends Application {
 		new App();
 	}
 	
+<<<<<<< HEAD
 	// test
+=======
+	// test test test
+>>>>>>> branch 'main' of https://github.com/Flammrock/protein-structural-autoencoder.git
 
 	Container protein; // will contain all atom of the protein
 	Container proteinBackbone; // will contain all atom of the protein
