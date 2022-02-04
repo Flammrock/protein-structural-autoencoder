@@ -12,6 +12,8 @@ import org.joml.Vector3f;
 import BioData.Atom;
 import BioData.Protein;
 import Display.*;
+import imgui.extension.implot.ImPlot;
+import imgui.extension.implot.ImPlotContext;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCond;
@@ -22,6 +24,8 @@ import imgui.type.ImInt;
 
 public class App extends Application {
 
+	ImBoolean t = new ImBoolean(true);
+	
 	public static void main(String[] args) {
 		new App();
 	}
@@ -30,6 +34,7 @@ public class App extends Application {
 	Container protein; // will contain all atom of the protein
 	Container proteinBackbone; // will contain all atom of the protein
 	SceneManager sceneManager;
+	ImPlotContext imPlotContext;
 	
 	/* Docking Area */
 	ImInt dockLeft;
@@ -50,6 +55,7 @@ public class App extends Application {
 
 		
 		sceneManager = new SceneManager();
+		imPlotContext = ImPlot.createContext();
 		
 		protein = new Container();
 		proteinBackbone = new Container();
@@ -66,6 +72,9 @@ public class App extends Application {
 
 	@Override
 	public void onInit() {
+		
+		ImPlot.setCurrentContext(imPlotContext);
+		
 		Shader.SHADER.create("basic");
 		
 		Scene sp = sceneManager.create("protein");
@@ -187,6 +196,25 @@ public class App extends Application {
 			ImGui.text(">> v0.0.1 beta build 9845");
 		}
 		ImGui.end();
+		
+		
+		
+		
+		//ImPlot.showColormapSelector("test color");
+		
+		ImPlot.showDemoWindow(test5);
+		
+		/*ImGui.begin("Test Plot");
+		{
+			if (ImPlot.beginPlot("test")) {
+				//ImPlot.
+				ImPlot.endPlot();
+			}
+		}
+		ImGui.end();*/
+		
+		
+		
 		
 		endDockSpace();
 		
