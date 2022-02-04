@@ -269,7 +269,7 @@ ImGui.begin("My first window4");
         // We SHOULD call those methods to update Dear ImGui state for the current frame
         final ImGuiIO io = ImGui.getIO();
         io.setDisplaySize(winWidth[0], winHeight[0]);
-        io.setDisplayFramebufferScale((float)winWidth[0]/(float)frameWidth[0], (float)winHeight[0]/(float)frameHeight[0]);
+        io.setDisplayFramebufferScale((float)frameWidth[0]/(float)winWidth[0], (float)frameHeight[0]/(float)winHeight[0]);
         io.setMousePos((float) mousePosX[0], (float) mousePosY[0]);
         io.setDeltaTime(deltaTime);
 
