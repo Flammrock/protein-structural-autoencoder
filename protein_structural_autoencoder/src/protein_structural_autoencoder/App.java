@@ -199,7 +199,6 @@ public class App extends Application {
 		
 		
 		
-		////
 		//ImPlot.showColormapSelector("test color");
 		
 		ImPlot.showDemoWindow(test5);
@@ -212,8 +211,7 @@ public class App extends Application {
 			}
 		}
 		ImGui.end();*/
-		
-		//////////////////////////////////
+
 		
 		
 		endDockSpace();
