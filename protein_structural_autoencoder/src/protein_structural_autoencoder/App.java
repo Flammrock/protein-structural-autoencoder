@@ -30,7 +30,7 @@ public class App extends Application {
 		new App();
 	}
 	
-	//jliefjilfjlifdfdffdfdsfsd
+	//jliefjilfjlifdfsfsdfsdf
 
 	Container protein; // will contain all atom of the protein
 	Container proteinBackbone; // will contain all atom of the protein
