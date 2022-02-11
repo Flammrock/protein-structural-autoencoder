@@ -30,10 +30,7 @@ public class App extends Application {
 		new App();
 	}
 	
-<<<<<<< Upstream, based on origin/main
-	// testjlj
-=======
->>>>>>> db0b823 test
+	//jliefjilfjlif
 
 	Container protein; // will contain all atom of the protein
 	Container proteinBackbone; // will contain all atom of the protein
