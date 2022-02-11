@@ -30,7 +30,10 @@ public class App extends Application {
 		new App();
 	}
 	
+<<<<<<< Upstream, based on origin/main
 	// testjlj
+=======
+>>>>>>> db0b823 test
 
 	Container protein; // will contain all atom of the protein
 	Container proteinBackbone; // will contain all atom of the protein
@@ -202,7 +205,7 @@ public class App extends Application {
 		////
 		//ImPlot.showColormapSelector("test color");
 		
-		ImPlot.showDemoWindow(test5);
+		//ImPlot.showDemoWindow(test5);
 		
 		/*ImGui.begin("Test Plot");
 		{

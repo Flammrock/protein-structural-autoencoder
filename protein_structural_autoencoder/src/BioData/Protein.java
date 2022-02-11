@@ -34,6 +34,8 @@ public class Protein {
 			Vector3f color;
 			if (atom.getType().substring(0, 1).equals("H")) {
 				color = Color3f.WHITE;
+			} else if (atom.getType().length() >= 2 && atom.getType().substring(0, 2).equals("CA")) {
+				color = Color3f.MAGENTA;
 			} else if (atom.getType().substring(0, 1).equals("C")) {
 				color = Color3f.GRAY;
 			} else if (atom.getType().substring(0, 1).equals("N")) {
