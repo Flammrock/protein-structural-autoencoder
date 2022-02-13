@@ -18,7 +18,7 @@ public class Atom {
 	private String type;
 	private int residueID;
 	
-	private Atom(String type, Vector3f position, int residueID) {
+	public Atom(String type, Vector3f position, int residueID) {
 		this.type = type;
 		this.position = position;
 		this.residueID = residueID;

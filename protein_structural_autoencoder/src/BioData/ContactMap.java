@@ -23,8 +23,14 @@ import java.util.List;
 
 public class ContactMap {
 		private Fragment F;
-		private float[][] atomes;
+		public float[][] atomes;
 		
+		
+		
+		public ContactMap() {
+			this.F = new Fragment();
+			
+		}
 		public ContactMap(Fragment F) {
 			List<Atom> AlphaCarbons = new ArrayList<>();
 			for(int i = 0; i < F.getResidues().size();i++) {

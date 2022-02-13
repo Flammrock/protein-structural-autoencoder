@@ -41,12 +41,14 @@ public class Fragment {
 	}
 	public List<Fragment> createFromSlidinWindow(List<Residue> Residues, int size){
 		List<Fragment> F = new ArrayList<>();
-		for(int i = 0; i<Residues.size()-size;i++) {
+		for(int i = 0; i<Residues.size()-size+1;i++) {
 			List<Residue> R = new ArrayList<>();
 			for(int j = 0; j<size;j++) {
 				R.add(Residues.get(i+j));
 			}
-			F.get(i).set(R);
+			Fragment Fr = new Fragment();
+			Fr.set(R);
+			F.add(Fr);
 		}
 		return F;
 	}

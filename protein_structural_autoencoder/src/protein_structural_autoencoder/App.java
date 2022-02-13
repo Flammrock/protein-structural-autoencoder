@@ -1,5 +1,6 @@
 package protein_structural_autoencoder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,8 +28,40 @@ public class App extends Application {
 	
 	public static void main(String[] args) {
 		new App();
+		/*Atom a = new Atom("CARBONE",new Vector3f(0,0,0),0);
+		Atom b = new Atom("CARBONE",new Vector3f(1,1,1),0);
+		Atom c = new Atom("CARBONE",new Vector3f(2,2,2),0);
+		Atom d = new Atom("CARBONE",new Vector3f(3,3,3),0);
+		List<Atom> A = new ArrayList<>();
+		List<Atom> B = new ArrayList<>();
+		List<Atom> C = new ArrayList<>();
+		List<Atom> D = new ArrayList<>();
+		A.add(a);
+		B.add(b);
+		C.add(c);
+		D.add(d);
+		Residue R1 = new Residue(0,A);
+		Residue R2 = new Residue(1,B);
+		Residue R3 = new Residue(2,C);
+		Residue R4 = new Residue(3,D);
+		Fragment F = new Fragment();
+		List<Residue> L = new ArrayList<>();
+		L.add(R1);
+		L.add(R2);
+		L.add(R3);
+		L.add(R4);
+		F.set(L);
+		List<Fragment> LF = new ArrayList<>();
+		LF = F.createFromSlidinWindow(L,2);
+		ContactMap CM = new ContactMap(F);
+		System.out.println("taile de la liste de fragment :"+LF.size()+"\ntaille du premier fragmennt : "+LF.get(0).getResidues().size());
+		System.out.println("1er élement du 2éme fragment (Id):"+LF.get(2).getResidues().get(0).getID());
+		System.out.println("2eme élement du 2éme fragment (Id):"+LF.get(2).getResidues().get(1).getID());
+		System.out.println("(0 2) :"+ CM.atomes[0][2]);*/
 	}
 	
+	
+
 	//jliefjilfjlifdfsfsdfsdf
 
 	Container protein; // will contain all atom of the protein

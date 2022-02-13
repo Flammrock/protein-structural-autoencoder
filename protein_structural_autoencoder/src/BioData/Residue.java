@@ -28,7 +28,7 @@ public class Residue {
 		return ID;
 	}
 
-	private Residue(int ID, List<Atom> l) {
+	public Residue(int ID, List<Atom> l) {
 		this.ID = ID;
 		this.atoms = l;
 	}
