@@ -1,5 +1,7 @@
 package BioData;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * TODO :
@@ -20,5 +22,32 @@ package BioData;
  */
 
 public class Fragment {
-
+	private List<Residue> residues;
+	
+	public Fragment() {
+		this.residues = new ArrayList<>();
+	}
+	
+	public Fragment(List<Residue> R) {
+		this.residues = R;
+	}
+	
+	public void set(List<Residue> R) {
+		this.residues = R;
+	}
+	
+	public List<Residue> getResidues(){
+		return this.residues;
+	}
+	public List<Fragment> createFromSlidinWindow(List<Residue> Residues, int size){
+		List<Fragment> F = new ArrayList<>();
+		for(int i = 0; i<Residues.size()-size;i++) {
+			List<Residue> R = new ArrayList<>();
+			for(int j = 0; j<size;j++) {
+				R.add(Residues.get(i+j));
+			}
+			F.get(i).set(R);
+		}
+		return F;
+	}
 }

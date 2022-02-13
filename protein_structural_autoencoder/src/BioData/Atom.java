@@ -49,6 +49,12 @@ public class Atom {
 		return residueID;
 	}
 	
+	public float AtomDistance(Atom a) {
+		float x = (float) Math.pow(this.position.x - a.position.x,2);
+		float y = (float) Math.pow(this.position.y - a.position.y,2);
+		float z = (float) Math.pow(this.position.z - a.position.z,2);
+		return (float) Math.sqrt(x+y+z);
+	}
 	
 	
 }
