@@ -9,8 +9,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import BioData.Atom;
-import BioData.Protein;
+import BioData.*;
 import Display.*;
 import imgui.extension.implot.ImPlot;
 import imgui.extension.implot.ImPlotContext;
@@ -53,15 +52,28 @@ public class App extends Application {
 	
 	public App() {
 		super(640,480,"Protein Structural Autoencoder");
-
 		
-		sceneManager = new SceneManager();
+		Protein p = Protein.buildFromFile("data.txt");
+		
+		List<Residue> r = p.getResidues();
+		
+		/*for (Residue ri : r) {
+			System.out.println(ri.getID()+", "+ri.getAtoms().size()+", "+ri.getAlphaCarbon().getType());
+			
+		}*/
+
+		/*Stream<Atom> atoms = Atom.loadFromFile("data.txt");
+		List<Atom> atomss = atoms.collect(Collectors.toList());*/
+		
+		
+		
+		/*sceneManager = new SceneManager();
 		imPlotContext = ImPlot.createContext();
 		
 		protein = new Container();
 		proteinBackbone = new Container();
 		
-		window.run();
+		window.run();*/
 	}
 	
 	@Override
@@ -80,13 +92,22 @@ public class App extends Application {
 		
 		Scene sp = sceneManager.create("protein");
 		Scene sb = sceneManager.create("backbone");
+		
+		Protein p = Protein.buildFromFile("data.txt");
 
-		Stream<Atom> atoms = Atom.loadFromFile("data.txt");
+		/*Stream<Atom> atoms = Atom.loadFromFile("data.txt");
 		List<Atom> atomss = atoms.collect(Collectors.toList());
+		
 		
 		
 		protein = Protein.buildMesh(atomss);
 		proteinBackbone = Protein.buildMeshBackbone(atomss);
+		
+		sp.add(protein);
+		sb.add(proteinBackbone);*/
+		
+		protein = p.getMesh();
+		proteinBackbone = p.getBackboneMesh();
 		
 		sp.add(protein);
 		sb.add(proteinBackbone);

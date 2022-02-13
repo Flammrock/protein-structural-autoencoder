@@ -1,7 +1,7 @@
 package BioData;
 
-
-
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * TODO:
@@ -17,4 +17,33 @@ package BioData;
 
 public class Residue {
 
+	private List<Atom> atoms;
+	private int ID;
+	
+	public List<Atom> getAtoms() {
+		return atoms;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	private Residue(int ID, List<Atom> l) {
+		this.ID = ID;
+		this.atoms = l;
+	}
+	
+	public Atom getAlphaCarbon() {
+		for (Atom a : atoms) {
+			if (a.isAlphaCarbon()) {
+				return a;
+			}
+		}
+		throw new RuntimeException("No Alpha Carbon in this Residue.");
+	}
+	
+	public static Residue build(int ID, List<Atom> atoms) {
+		return new Residue(ID,atoms);
+	}
+	
 }

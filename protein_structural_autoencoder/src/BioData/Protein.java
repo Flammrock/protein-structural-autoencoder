@@ -1,6 +1,10 @@
 package BioData;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
@@ -13,24 +17,44 @@ import Display.QuaternionHelper;
 import Display.SphereGeometry;
 
 public class Protein {
-
 	
 	
+	private List<Residue> residues;
 	
+	private Protein(List<Residue> r) {
+		residues = r;
+	}
 	
+	public static Protein buildFromFile(String filename) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(Protein.class.getResourceAsStream(filename)));
+		return new Protein(
+			reader.lines()
+			.map(Atom::load)
+			.collect(Collectors.groupingBy(
+				Atom::getResidueID
+			))
+			.entrySet().stream()
+			.map(entry -> Residue.build(entry.getKey(),entry.getValue()))
+			.collect(Collectors.toList())
+		)
+		;
+	}
 	
-	
+	public List<Residue> getResidues() {
+		return residues;
+	}
 	
 	
 	
 	
 	/* un peu le bordel x), ne pas toucher */
 	
-	static public Container buildMesh(List<Atom> atoms) {
+	public Container getMesh() {
 		Container container = new Container();
 		SphereGeometry testsphere3 = new SphereGeometry(0.5f, 8, 16);
 		Mesh spheremesh4 = null;
-		for (Atom atom : atoms) {
+		for (Residue r : residues) {
+		for (Atom atom : r.getAtoms()) {
 			Vector3f color;
 			if (atom.getType().substring(0, 1).equals("H")) {
 				color = Color3f.WHITE;
@@ -76,14 +100,16 @@ public class Protein {
 	        	spheremesh4 = spheremesh3;
 			}
 		}
+		}
 		return container;
 	}
 	
-	static public Container buildMeshBackbone(List<Atom> atoms) {
+	public Container getBackboneMesh() {
 		Container container = new Container();
 		SphereGeometry testsphere3 = new SphereGeometry(0.5f, 8, 16);
 		Mesh spheremesh4 = null;
-		for (Atom atom : atoms) {
+		for (Residue r : residues) {
+		for (Atom atom : r.getAtoms()) {
 			Vector3f color;
 			if (atom.getType().substring(0, 1).equals("H")) {
 				color = Color3f.WHITE;
@@ -126,6 +152,7 @@ public class Protein {
 	        	}
 	        	spheremesh4 = spheremesh3;
 			}
+		}
 		}
 		return container;
 	}
