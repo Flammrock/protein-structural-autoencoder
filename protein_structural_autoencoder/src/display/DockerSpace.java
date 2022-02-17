@@ -3,11 +3,14 @@ package display;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import display.internal.ImGuiLayer;
 import imgui.ImGui;
 import imgui.flag.ImGuiDir;
 import imgui.type.ImInt;
 
-public class DockerSpace extends Component {
+public class DockerSpace extends Identifier {
+	
+	
 	
 	private Map<String,Node> dockIds = new LinkedHashMap<>();
 	private Node rootNode;
@@ -178,9 +181,8 @@ public class DockerSpace extends Component {
 		}
 		imgui.internal.ImGui.dockBuilderFinish(dockSpaceID);
 	}
-	
-	@Override
-	public void update() {
+
+	public void init() {
 		setup();
 		ImGui.dockSpace(dockSpaceID);
 	}

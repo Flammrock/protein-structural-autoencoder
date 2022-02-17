@@ -179,14 +179,20 @@ public class App extends Application {
 			panel.setTitle("closed!");
 		});
 		
-		
+		WindowPanel panel3 = new WindowPanel();
+		WindowPanel panel4 = new WindowPanel();
 		WindowPanel panel2 = new WindowPanel();
-		DockerSpace docker2 = new DockerSpace.Builder()
-				.addRootNode("root", DockerSpace.Direction.Left, 0.5f)
-				.addNode("root", "up", DockerSpace.Direction.Up, 0.3f, true)
-				.build()
-				;
-		navigation.setDockerNode(docker2.getNode("root"));
+		panel3.setTitle("hello");
+		panel4.setTitle("world");
+		panel2.setDockerSpace(
+			new DockerSpace.Builder()
+			.addRootNode("root", DockerSpace.Direction.Left, 0.5f)
+			.addNode("root", "up", DockerSpace.Direction.Up, 0.3f, true)
+			.build()
+		);
+		navigation.setDockerNode(panel2.getDockerSpace().getNode("root"));
+		panel3.setDockerNode(panel2.getDockerSpace().getNode("up"));
+		panel4.setDockerNode(panel2.getDockerSpace().getNode("up").getOpposite());
 		panel2.setTitle("example");
 		panel2.setFlags(EnumSet.of(
 			WindowPanel.Flag.NoCloseable,
@@ -199,43 +205,17 @@ public class App extends Application {
 			WindowPanel.Flag.SizeStateSaved,
 			WindowPanel.Flag.PositionStateSaved
 		));
-		panel2.setBindingOnDraw((display.event.Sender s, display.event.Data e) -> {
-			
-			
-			
-			//Plot2D.imshow("##heatmap",dist2);
-
-			navigation.update();
-			
-			ImGui.setNextWindowDockID(docker2.getNode("up").getID(), ImGuiCond.Once);
-			System.out.println("placed up :"+docker2.getNode("up").getID());
-			ImGui.begin("View_up");
-			{
-				ImGui.text("nothing");
-			}
-			ImGui.end();
-			
-			ImGui.setNextWindowDockID(docker2.getNode("up").getOpposite().getID(), ImGuiCond.Once);
-			System.out.println("placed down :"+docker2.getNode("up").getOpposite().getID());
-			ImGui.begin("View_down");
-			{
-				ImGui.text("nothing");
-			}
-			ImGui.end();
-			
-			ImGui.dockSpace(ImGui.getID("Dockspace"));
-			
-		});
-		panel2.setBindingOnOpen((display.event.Sender s, display.event.Data e) -> {
-			
-		});
-		panel2.setBindingOnClose((display.event.Sender s, display.event.Data e) -> {
-			panel2.setTitle("closed!");
-		});
 		
-		panel2.setDockerSpace(
-			docker2
-		);
+		
+		panel2.addChildren(navigation);
+		panel2.addChildren(panel3);
+		panel2.addChildren(panel4);
+		
+		//WindowPanel.Panels.put(panel.getInternalID(), panel);
+		WindowPanel.Panels.put(panel2.getInternalID(), panel2);
+		
+
+		
 		
 		
 		
@@ -308,6 +288,8 @@ public class App extends Application {
 	public void onUpdate(Float deltaTime) {
 
 		if (deltaTime >= 0) this.draw(deltaTime);
+		
+		//System.out.println("===== START ======");
 
 		window.imgGuiPrepare(deltaTime);
 		
@@ -460,6 +442,8 @@ public class App extends Application {
 		endDockSpace();
 		
 		window.imgGuiRender();
+		
+		//System.out.println("===== END ======");
 		
 	}
 	

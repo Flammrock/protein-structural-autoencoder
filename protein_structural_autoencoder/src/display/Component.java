@@ -52,6 +52,7 @@ public abstract class Component extends Identifier {
 	}
 	
 	public void endDock() {
+		if (dockerNode==null) return;
 		if (!(this instanceof WindowPanel)) ImGui.end();
 	}
 	

@@ -10,6 +10,7 @@ import imgui.type.ImBoolean;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.util.Stack;
 import java.util.function.Consumer;
 
 public class ImGuiLayer {

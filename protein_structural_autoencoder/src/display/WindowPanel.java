@@ -81,11 +81,11 @@ public class WindowPanel extends Component {
 	
 	
 	public WindowPanel() {
-		Panels.put(ID, this);
+		//Panels.put(ID, this);
 	}
 	
 	public void destroy() {
-		Panels.remove(ID);
+		//Panels.remove(ID);
 	}
 	
 	public boolean isOpen() {
@@ -147,8 +147,10 @@ public class WindowPanel extends Component {
 	@Override
 	public void update() {
 		if (!isOpen()) return;
-		computePosition();
-		if (!initialized) ImGui.setNextWindowSize(originSize.x, originSize.y, flags.contains(Flag.SizeStateSaved)?ImGuiCond.Once:ImGuiCond.Always);
+		if (getDockerNode()==null) {
+			computePosition();
+			if (!initialized) ImGui.setNextWindowSize(originSize.x, originSize.y, flags.contains(Flag.SizeStateSaved)?ImGuiCond.Once:ImGuiCond.Always);
+		}
 		boolean opened = false;
 		startDock();
 		if (flags.contains(Flag.NoCloseable)) {
@@ -159,7 +161,7 @@ public class WindowPanel extends Component {
 		if (opened) {
 			position = ImGui.getWindowPos();
 			size = ImGui.getWindowSize();
-			if (dockerspace!=null) dockerspace.update();
+			if (dockerspace!=null) dockerspace.init();
 			for (Map.Entry<String,Component> entry : children.entrySet()) {
 				entry.getValue().update();
 			}
