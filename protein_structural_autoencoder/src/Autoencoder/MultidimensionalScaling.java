@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.joml.Vector2f;
 
-import Helper.ArrayUtils;
+import display.helper.ArrayUtils;
 
 public class MultidimensionalScaling {
 	

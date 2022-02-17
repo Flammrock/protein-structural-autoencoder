@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
-import Display.Color3f;
-import Display.Container;
-import Display.CylinderGeometry;
-import Display.Material;
-import Display.Mesh;
-import Display.QuaternionHelper;
-import Display.SphereGeometry;
+import display.internal.Color3f;
+import display.internal.Container;
+import display.internal.CylinderGeometry;
+import display.internal.Material;
+import display.internal.Mesh;
+import display.internal.QuaternionHelper;
+import display.internal.SphereGeometry;
 
 public class Protein {
 	
