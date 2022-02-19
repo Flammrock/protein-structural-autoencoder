@@ -28,4 +28,8 @@ public class Manager {
 		fire(identifier,null,data);
 	}
 	
+	public void fire(Event e) {
+		fire(e.getName(),e.getSender(),e.getData());
+	}
+	
 }

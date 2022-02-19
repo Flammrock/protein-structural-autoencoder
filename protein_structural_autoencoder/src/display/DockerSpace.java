@@ -3,32 +3,41 @@ package display;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import display.internal.ImGuiLayer;
 import imgui.ImGui;
 import imgui.flag.ImGuiDir;
 import imgui.type.ImInt;
 
 public class DockerSpace extends Identifier {
 	
-	
+	public static DockerSpace buildDefault() {
+		return new DockerSpace.Builder()
+				.addRootNode("left", DockerSpace.Direction.Left, 0.2f)
+				.addNode("left", "right", DockerSpace.Direction.Right, 0.2f, true)
+				.addNode("right", "up", DockerSpace.Direction.Up, 0.1f, true)
+				.addNode("up", "down", DockerSpace.Direction.Down, 0.1f, true)
+				.addAlias("down", "center", true)
+				.build();
+	}
 	
 	private Map<String,Node> dockIds = new LinkedHashMap<>();
+	private Map<String,Node> dockIdsAlias = new LinkedHashMap<>();
 	private Node rootNode;
 	private int dockSpaceID;
 	private boolean isSetup = false;
 	
-	private DockerSpace(Node rootNode, Map<String,Node> dockIds, Map<String,Node> dockIdsOpposite) {
+	private DockerSpace(Node rootNode, Map<String,Node> dockIds, Map<String,Node> dockIdsOpposite, Map<String,Node> dockIdsAlias) {
 		this.dockIds = dockIds;
+		this.dockIdsAlias = dockIdsAlias;
 		this.rootNode = rootNode;
 	}
 	
 	public boolean hasNode(String name) {
-		return dockIds.containsKey(name);
+		return dockIds.containsKey(name) || dockIdsAlias.containsKey(name);
 	}
 	
 	public Node getNode(String name) {
 		if (!hasNode(name)) throw new IllegalStateException("Error: the node \""+name+"\" doesn't exist.");
-		return dockIds.get(name);
+		return dockIds.containsKey(name) ? dockIds.get(name) : dockIdsAlias.get(name);
 	}
 	
 	public enum Direction {
@@ -101,6 +110,7 @@ public class DockerSpace extends Identifier {
 		
 		private Map<String,Node> dockIds = new LinkedHashMap<>();
 		private Map<String,Node> dockIdsOpposite = new LinkedHashMap<>();
+		private Map<String,Node> dockIdsAlias = new LinkedHashMap<>();
 		private Node rootNode;
 		private int index = 0;
 		
@@ -161,16 +171,30 @@ public class DockerSpace extends Identifier {
 			return this;
 		}
 		
+		public Builder addAlias(String nodeName, String newName, boolean opposite) {
+			if (!dockIds.containsKey(nodeName)) {
+				throw new IllegalStateException("Error: cannot found the node \""+nodeName+"\".");
+			}
+			if (dockIds.containsKey(newName)) {
+				throw new IllegalStateException("Error: unable to create the alias \""+newName+"\" because a node already has this name.");
+			}
+			if (dockIdsAlias.containsKey(newName)) {
+				throw new IllegalStateException("Error: the alias \""+newName+"\" already exist.");
+			}
+			dockIdsAlias.put(newName,opposite?dockIds.get(nodeName).getOpposite():dockIds.get(nodeName));
+			return this;
+		}
+		
 		public DockerSpace build() {
-			return new DockerSpace(rootNode,dockIds,dockIdsOpposite);
+			return new DockerSpace(rootNode,dockIds,dockIdsOpposite,dockIdsAlias);
 		}
 		
 	}
 	
-	public void setup() {
+	public void setup(int id) {
 		if (isSetup) return;
 		isSetup = true;
-		dockSpaceID = ImGui.getID("Dockspace_"+getID());
+		dockSpaceID = id;
 		imgui.internal.ImGui.dockBuilderAddNode(dockSpaceID);
 		imgui.internal.ImGui.dockBuilderSplitNode(dockSpaceID, rootNode.dir.dir, rootNode.ratio, rootNode.id, rootNode.opposite.id);
 		for (Map.Entry<String,Node> entry : dockIds.entrySet()) {
@@ -180,6 +204,10 @@ public class DockerSpace extends Identifier {
 			imgui.internal.ImGui.dockBuilderSplitNode(root.get(), current.dir.dir, current.ratio, current.id, current.opposite.id);
 		}
 		imgui.internal.ImGui.dockBuilderFinish(dockSpaceID);
+	}
+	
+	public void setup() {
+		setup(ImGui.getID("Dockspace_"+getID()));
 	}
 
 	public void init() {

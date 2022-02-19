@@ -3,6 +3,7 @@ package display;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import imgui.ImGui;
@@ -12,14 +13,6 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
 public class WindowPanel extends Component {
-	
-	public static Map<String,WindowPanel> Panels = new HashMap<String, WindowPanel>();
-	
-	public static void updateAllPanels() {
-		for (Map.Entry<String,WindowPanel> entry : Panels.entrySet()) {
-			entry.getValue().update();
-		}
-	}
 	
 	
 	public enum Flag {
@@ -77,16 +70,8 @@ public class WindowPanel extends Component {
 	private DockerSpace dockerspace = null;
 	private int internalFlags = 0;
 	private boolean initialized = false;
-	private Map<String,Component> children = new HashMap<>();
+	private Map<String,Component> children = new LinkedHashMap<>();
 	
-	
-	public WindowPanel() {
-		//Panels.put(ID, this);
-	}
-	
-	public void destroy() {
-		//Panels.remove(ID);
-	}
 	
 	public boolean isOpen() {
 		return isOpenContainer.get();

@@ -4,11 +4,15 @@ package display.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SceneManager {
+import display.event.Event;
+import display.event.Eventable;
+
+public class SceneManager implements Eventable {
 
 	private Map<String, Scene> scenes;
 	
 	public SceneManager() {
+		super();
 		this.scenes = new HashMap<>();
 	}
 	
@@ -38,6 +42,13 @@ public class SceneManager {
 	public void destroy() {
 		for (Map.Entry<String, Scene> entry : scenes.entrySet()) {
 			entry.getValue().destroy();
+		}
+	}
+
+	@Override
+	public void sendEvent(Event e) {
+		for (Map.Entry<String, Scene> entry : scenes.entrySet()) {
+			entry.getValue().sendEvent(e);
 		}
 	}
 	

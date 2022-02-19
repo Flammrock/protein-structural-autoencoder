@@ -12,13 +12,19 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-public class Scene {
+import display.event.Event;
+import display.event.Eventable;
+import display.eventtypes.ResizeEvent;
+import imgui.ImVec2;
+
+public class Scene implements Eventable {
 
 	private List<Mesh> meshs;
 	private Shader shader;
 	private CameraManager cameraManager;
 	private boolean useOffscreen;
 	private OffScreen offscreen;
+	private display.event.Manager eventManager;
 	
 	public Scene() {
 		this.meshs = new ArrayList<>();
@@ -28,6 +34,13 @@ public class Scene {
 		this.cameraManager.setMainCamera("default");
 		this.useOffscreen = true;
 		this.offscreen = new OffScreen();
+		this.eventManager = new display.event.Manager();
+		
+		this.eventManager.register(ResizeEvent.Name, (display.event.Sender sender, display.event.Data data) -> {
+			ImVec2 size = (ImVec2)data.get();
+			resize(size.x,size.y);
+		});
+		
 	}
 	
 	public boolean hasTexture() {
@@ -105,6 +118,11 @@ public class Scene {
 		}
 		
 		if (useOffscreen) this.offscreen.unbind();
+	}
+
+	@Override
+	public void sendEvent(Event e) {
+		eventManager.fire(e);
 	}
 	
 }
