@@ -3,7 +3,7 @@ package protein_structural_autoencoder;
 
 import org.joml.Vector3f;
 
-import BioData.*;
+import bio.*;
 import display.*;
 import display.internal.*;
 import imgui.extension.implot.ImPlot;
@@ -18,6 +18,28 @@ public class App extends Application {
 	public Gui gui = new Gui();
 	
 	public static void main(String[] args) {
+		
+		//Protein p = Protein.buildFromFile("data.txt");
+		
+		/*bio.pdb.Record.FieldData data = bio.pdb.Record.ATOM.parse("ATOM    294  CA  THR A  50      -4.331  16.229  -0.726  1.00 10.05           C  ");
+		
+		
+		System.out.println("`"+data.getValue("ATOM")+"`");
+		System.out.println("`"+data.getValue("serial")+"`");
+		System.out.println("`"+data.getValue("name")+"`");
+		System.out.println("`"+data.getValue("altLoc")+"`");
+		System.out.println("`"+data.getValue("resName")+"`");
+		System.out.println("`"+data.getValue("chainID")+"`");
+		System.out.println("`"+data.getValue("resSeq")+"`");
+		System.out.println("`"+data.getValue("iCode")+"`");
+		System.out.println("`"+data.getValue("x")+"`");
+		System.out.println("`"+data.getValue("y")+"`");
+		System.out.println("`"+data.getValue("z")+"`");
+		System.out.println("`"+data.getValue("occupancy")+"`");
+		System.out.println("`"+data.getValue("tempFactor")+"`");
+		System.out.println("`"+data.getValue("element")+"`");
+		System.out.println("`"+data.getValue("charge")+"`");*/
+		
 		App myapp = new App();
 		myapp.close();
 		/*Atom a = new Atom("CARBONE",new Vector3f(0,0,0),0);

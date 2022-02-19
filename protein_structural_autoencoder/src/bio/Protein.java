@@ -1,4 +1,4 @@
-package BioData;
+package bio;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,6 +16,8 @@ import display.internal.Mesh;
 import display.internal.QuaternionHelper;
 import display.internal.SphereGeometry;
 
+import bio.pdb.Record;
+
 public class Protein {
 	
 	
@@ -29,6 +31,7 @@ public class Protein {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(Protein.class.getResourceAsStream(filename)));
 		return new Protein(
 			reader.lines()
+			.filter(Record.is(Record.ATOM))
 			.map(Atom::load)
 			.collect(Collectors.groupingBy(
 				Atom::getResidueID

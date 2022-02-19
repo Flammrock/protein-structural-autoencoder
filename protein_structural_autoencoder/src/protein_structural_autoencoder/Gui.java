@@ -21,6 +21,7 @@ import imgui.ImVec2;
 public class Gui extends UI {
 	
 	public Navigation navigation;
+	public WindowPanel panelNavigation;
 	public WindowPanel view;
 	public WindowPanel console;
 	public WindowPanel welcome;
@@ -47,93 +48,15 @@ public class Gui extends UI {
 		protein = new Container();
 		proteinBackbone = new Container();
 		
-		Navigation.Item itemtest = new Navigation.Item("oh, smart!", EnumSet.of(Navigation.Item.Flag.Framed));
-		itemtest.setBindingOnContentDraw((display.event.Sender s, display.event.Data e) -> {
-			//Plot2D.imshow("##heatmap",dist2);
-		});
 		
-		Navigation navigation2 = new Navigation
-				.Builder()
-				.addItem("My first Item !", EnumSet.of(Navigation.Item.Flag.Framed))
-				.addItem("une database sql")
-				.addItem("wsh mon frero")
-				.addItem(itemtest)
-				.build();
-		
-		WindowPanel panel = new WindowPanel();
-		panel.setTitle("example2");
-		panel.setFlags(EnumSet.of(
-			WindowPanel.Flag.NoCloseable,
-			//WindowPanel.Flag.NoResizeable,
-			//WindowPanel.Flag.UnsavedDocument,
-			WindowPanel.Flag.NoNav,
-			WindowPanel.Flag.NoDockable,
-			WindowPanel.Flag.NoCollapse,
-			//WindowPanel.Flag.Centered,
-			WindowPanel.Flag.SizeStateSaved,
-			WindowPanel.Flag.PositionStateSaved
-		));
-		panel.setBindingOnDraw((display.event.Sender s, display.event.Data e) -> {
-			//Plot2D.imshow("##heatmap",dist2);
-			
-			//navigation.update();
-			
-		});
-		panel.setBindingOnOpen((display.event.Sender s, display.event.Data e) -> {
-			
-		});
-		panel.setBindingOnClose((display.event.Sender s, display.event.Data e) -> {
-			panel.setTitle("closed!");
-		});
-		
-		WindowPanel panel3 = new WindowPanel();
-		WindowPanel panel4 = new WindowPanel();
-		WindowPanel panel2 = new WindowPanel();
-		panel3.setTitle("hello");
-		panel4.setTitle("world");
-		panel3.addChildren(new Label("salut toi", new Color(1,0,0)));
-		panel3.addChildren(new Label("comment vas-tu ?"));
-		panel4.addChildren(
-			new Button("afficher la console")
-			.setBackgroundColor(Color.Red)
-			.setForegroundColor(Color.Green)
-		);
-		panel2.setDockerSpace(
-			new DockerSpace.Builder()
-			.addRootNode("root", DockerSpace.Direction.Left, 0.5f)
-			.addNode("root", "up", DockerSpace.Direction.Up, 0.3f, true)
-			.build()
-		);
-		navigation2.setDockerNode(panel2.getDockerSpace().getNode("root"));
-		panel3.setDockerNode(panel2.getDockerSpace().getNode("up"));
-		panel4.setDockerNode(panel2.getDockerSpace().getNode("up").getOpposite());
-		panel2.setTitle("example");
-		panel2.setFlags(EnumSet.of(
-			WindowPanel.Flag.NoCloseable,
-			//WindowPanel.Flag.NoResizeable,
-			//WindowPanel.Flag.UnsavedDocument,
-			WindowPanel.Flag.NoNav,
-			WindowPanel.Flag.NoDockable,
-			WindowPanel.Flag.NoCollapse,
-			//WindowPanel.Flag.Centered,
-			WindowPanel.Flag.SizeStateSaved,
-			WindowPanel.Flag.PositionStateSaved
-		));
-		
-		
-		panel2.addChildren(navigation2);
-		panel2.addChildren(panel3);
-		panel2.addChildren(panel4);
-		
-		//WindowPanel.Panels.put(panel.getInternalID(), panel);
-		add(panel2);
+		Navigation navigation = new Navigation.Builder().addItem("Database").addItem("Example").build();
 		
 
-		WindowPanel navigation = new WindowPanel();
-		navigation.setTitle("Navigation");
-		navigation.setDockerNode(dockerspace.getNode("left"));
-		navigation.addChildren(new Navigation.Builder().addItem("Database").addItem("Example").build());
-		add(navigation);
+		panelNavigation = new WindowPanel();
+		panelNavigation.setTitle("Navigation");
+		panelNavigation.setDockerNode(dockerspace.getNode("left"));
+		panelNavigation.addChildren(navigation);
+		add(panelNavigation);
 		
 		
 		sceneProtein = new WindowPanel();

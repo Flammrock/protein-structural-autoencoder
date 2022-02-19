@@ -1,4 +1,4 @@
-package BioData;
+package bio;
 
 import java.util.ArrayList;
 import java.util.List;

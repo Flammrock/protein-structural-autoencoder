@@ -12,7 +12,7 @@ public class DockerSpace extends Identifier {
 	public static DockerSpace buildDefault() {
 		return new DockerSpace.Builder()
 				.addRootNode("left", DockerSpace.Direction.Left, 0.2f)
-				.addNode("left", "right", DockerSpace.Direction.Right, 0.2f, true)
+				.addNode("left", "right", DockerSpace.Direction.Right, 0.3f, true)
 				.addNode("right", "up", DockerSpace.Direction.Up, 0.1f, true)
 				.addNode("up", "down", DockerSpace.Direction.Down, 0.1f, true)
 				.addAlias("down", "center", true)
