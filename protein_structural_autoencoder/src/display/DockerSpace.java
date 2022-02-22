@@ -24,6 +24,7 @@ public class DockerSpace extends Identifier {
 	private Node rootNode;
 	private int dockSpaceID;
 	private boolean isSetup = false;
+	private Node baseNode = new Node("##baseNode",null,1.0f,null,false);
 	
 	private DockerSpace(Node rootNode, Map<String,Node> dockIds, Map<String,Node> dockIdsOpposite, Map<String,Node> dockIdsAlias) {
 		this.dockIds = dockIds;
@@ -76,12 +77,18 @@ public class DockerSpace extends Identifier {
 		private ImInt id = new ImInt();
 		private Node parent = null;
 		private int index;
+		private boolean init = true;
 		
 		private Node(String name, Node opposite, float ratio, Direction dir) {
 			this.name = name;
 			this.opposite = opposite;
 			this.ratio = ratio;
 			this.dir = dir;
+		}
+		
+		private Node(String name, Node opposite, float ratio, Direction dir, boolean isinit) {
+			this(name,opposite,ratio,dir);
+			this.init = isinit;
 		}
 		
 		public Node getOpposite() {
@@ -102,6 +109,10 @@ public class DockerSpace extends Identifier {
 		
 		public String getName() {
 			return name;
+		}
+		
+		public boolean isInit() {
+			return init;
 		}
 		
 	}
@@ -196,7 +207,7 @@ public class DockerSpace extends Identifier {
 		isSetup = true;
 		dockSpaceID = id;
 		imgui.internal.ImGui.dockBuilderAddNode(dockSpaceID);
-		imgui.internal.ImGui.dockBuilderSplitNode(dockSpaceID, rootNode.dir.dir, rootNode.ratio, rootNode.id, rootNode.opposite.id);
+		if (rootNode!=null) imgui.internal.ImGui.dockBuilderSplitNode(dockSpaceID, rootNode.dir.dir, rootNode.ratio, rootNode.id, rootNode.opposite.id);
 		for (Map.Entry<String,Node> entry : dockIds.entrySet()) {
 			if (entry.getValue().index==rootNode.index) continue;
 			Node current = entry.getValue();
@@ -204,6 +215,8 @@ public class DockerSpace extends Identifier {
 			imgui.internal.ImGui.dockBuilderSplitNode(root.get(), current.dir.dir, current.ratio, current.id, current.opposite.id);
 		}
 		imgui.internal.ImGui.dockBuilderFinish(dockSpaceID);
+		baseNode.init = true;
+		baseNode.id = new ImInt(dockSpaceID);
 	}
 	
 	public void setup() {
@@ -213,6 +226,10 @@ public class DockerSpace extends Identifier {
 	public void init() {
 		setup();
 		ImGui.dockSpace(dockSpaceID);
+	}
+	
+	public Node getBaseNode() {
+		return baseNode;
 	}
 	
 }
