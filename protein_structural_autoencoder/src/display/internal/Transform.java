@@ -65,6 +65,10 @@ public class Transform {
 		position.rotateAxis(angle, axis.x, axis.y, axis.z);
 		position.add(origin);
 	}
+
+	public void translate(Vector3f t) {
+		position.add(t);
+	}
 	
 	
 	

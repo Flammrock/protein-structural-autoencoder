@@ -150,4 +150,8 @@ public class Mesh {
 	public boolean isDestroy() {
 		return isDestroyState;
 	}
+
+	public void translate(Vector3f t) {
+		transform.translate(t);
+	}
 }

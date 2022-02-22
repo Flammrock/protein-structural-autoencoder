@@ -55,12 +55,12 @@ public class Camera {
 	}
 	
 	public void fitView(Container container) {
-		Vector3f objectSizes = container.getMax().sub(container.getMin()).add(container.getPosition());
+		Vector3f objectSizes = container.getMax().sub(container.getMin());
 		float objectSize = Math.max(objectSizes.x, Math.max(objectSizes.y, objectSizes.z));
 		float cameraView = (float) (2.0f * Math.tan(0.5f * fov));
 		float distance = 0.5f * objectSize / cameraView;
 		distance += 0.5f * objectSize;
-		position = container.getCenter().add(container.getPosition()).sub(getForward().mul(distance));
+		position = container.getCenter().sub(getForward().mul(distance));
 	}
 
 	public void setOrthographic(float left, float right, float top, float bottom) {
