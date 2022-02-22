@@ -11,8 +11,11 @@ public class Color {
 	static public Color Grey    = new Color(0.5f, 0.5f, 0.5f);
 	static public Color Magenta = new Color(1.0f, 0.0f, 1.0f);
 	static public Color Red     = new Color(1.0f, 0.0f, 0.0f);
+	static public Color Orange  = new Color(1.0f, 0.49f, 0.0f);
 	static public Color White   = new Color(1.0f, 1.0f, 1.0f);
 	static public Color Yellow  = new Color(1.0f, 0.92f, 0.016f);
+	
+	static public Color DarkRed = new Color(0.6f, 0.0f, 0.0f);
 
 	public float r = 0.0f;
 	public float g = 0.0f;
