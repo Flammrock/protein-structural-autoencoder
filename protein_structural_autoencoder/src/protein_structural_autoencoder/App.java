@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 
 import bio.*;
 import display.*;
+import display.event.*;
 import display.internal.*;
 import imgui.extension.implot.ImPlot;
 import imgui.ImGui;
@@ -85,6 +86,23 @@ public class App extends Application {
 		super(640,480,"Protein Structural Autoencoder");
 		bindUI(gui);
 		
+		
+		Protein.setBindingOnLoadStart((Sender sender, Data data) -> {
+			gui.log("[LOAD] Protein parsing...");
+		});
+		
+		Protein.setBindingOnLoadEnd((Sender sender, Data data) -> {
+			Protein p = (Protein) data.get();
+			gui.log(Console.Level.Success,"[LOAD] Protein `"+p.getOriginalFilename()+"` successfully loaded!");
+		});
+		
+		Atom.setBindingOnLoad((Sender sender, Data data) -> {
+			bio.pdb.records.Atom atom = (bio.pdb.records.Atom)data.get();
+			Vector3f pos = new Vector3f(atom.x,atom.y,atom.z);
+			gui.log("[LOAD] type :"+atom.name+", pos: "+pos.toString()+", reqSeq: "+atom.resSeq);
+		});
+		
+		
 		//Protein p = Protein.buildFromFile("data.txt");
 		
 		/*List<Residue> r = p.getResidues();
@@ -112,20 +130,12 @@ public class App extends Application {
 	@Override
 	public void onInit() {
 		super.onInit();
-		Scene sp = gui.sceneManager.create("protein");
-		Scene sb = gui.sceneManager.create("backbone");
 		
-		Protein p = Protein.buildFromFile("data.txt");
 		
-		gui.protein = p.getMesh();
-		gui.proteinBackbone = p.getBackboneMesh();
+		gui.loadProtein("data.txt");
+		gui.loadProtein("data2.txt");
 		
-		sp.add(gui.protein);
-		sb.add(gui.proteinBackbone);
 		
-
-		sp.getCamera().setPosition(new Vector3f(5,8,50));
-		sb.getCamera().setPosition(new Vector3f(5,8,50));
 		
 		//ImPlot::GetStyle().Colormap = ImPlot::AddColormap("Mandelbrot",cmap,5,false);
 

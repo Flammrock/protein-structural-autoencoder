@@ -1,11 +1,15 @@
 package protein_structural_autoencoder;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.joml.Vector3f;
 
+import bio.Protein;
 import display.Button;
 import display.Color;
+import display.Console;
 import display.DockerSpace;
 import display.Label;
 import display.Navigation;
@@ -14,6 +18,7 @@ import display.UI;
 import display.WindowPanel;
 import display.eventtypes.ResizeEvent;
 import display.internal.Container;
+import display.internal.Scene;
 import display.internal.SceneManager;
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -23,14 +28,14 @@ public class Gui extends UI {
 	public Navigation navigation;
 	public WindowPanel panelNavigation;
 	public WindowPanel view;
-	public WindowPanel console;
+	public Console console;
 	public WindowPanel welcome;
-	public WindowPanel sceneProtein;
-	public WindowPanel sceneBackbone;
 	
-	Container protein; // will contain all atom of the protein
-	Container proteinBackbone; // will contain all atom of the protein
 	SceneManager sceneManager;
+	
+	
+	// contient toutes les instances de proteines
+	List<WindowPanel> proteinPanel;
 	
 	
 	DockerSpace dockerspace;
@@ -41,12 +46,11 @@ public class Gui extends UI {
 
 	private void create() {
 		
+		proteinPanel = new ArrayList<>();
+		
 		dockerspace = DockerSpace.buildDefault();
 		
 		sceneManager = new SceneManager();
-		
-		protein = new Container();
-		proteinBackbone = new Container();
 		
 		
 		Navigation navigation = new Navigation.Builder().addItem("Database").addItem("Example").build();
@@ -59,7 +63,7 @@ public class Gui extends UI {
 		add(panelNavigation);
 		
 		
-		sceneProtein = new WindowPanel();
+		/*sceneProtein = new WindowPanel();
 		sceneProtein.setTitle("Protein View Scene");
 		sceneProtein.setDockerNode(dockerspace.getNode("center"));
 		sceneProtein.setBindingOnDraw((display.event.Sender sender, display.event.Data data) -> {
@@ -84,7 +88,7 @@ public class Gui extends UI {
 			if (sceneManager.get("backbone").hasTexture()) ImGui.image(sceneManager.get("backbone").getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
 			ImGui.endChild();
 		});
-		add(sceneBackbone);
+		add(sceneBackbone);*/
 		
 		view = new WindowPanel();
 		view.setTitle("View");
@@ -99,16 +103,17 @@ public class Gui extends UI {
 		welcome.addChildren(new Label("Coded by Lemmy Briot, Ahmed Chaudhry, Ameur Mahfoudi and Noa Weiss"));
 		add(welcome);
 		
-		console = new WindowPanel();
+		console = new Console(1000);
 		console.setTitle("Console");
 		console.setDockerNode(dockerspace.getNode("down"));
-		console.addChildren(new Label(">> v0.0.1 beta build 9845"));
+		console.log(">> v0.0.1 beta build 9845");
 		add(console);
+		
 	}
 	
 	public void update(Float deltaTime) {
-		protein.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
-		proteinBackbone.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
+		//protein.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
+		//proteinBackbone.rotate((float)Math.toRadians(20*deltaTime), new Vector3f(0,1,0));
 	}
 	
 	@Override
@@ -119,6 +124,97 @@ public class Gui extends UI {
 	@Override
 	protected void buildDockSpace(int dockID) {
 		dockerspace.setup(dockID);
+	}
+
+	public void log(String data) {
+		console.log(data);
+	}
+	
+	public void log(Console.Level level, String data) {
+		console.log(level,data);
+	}
+
+	public void loadProtein(String filename) {
+		
+		WindowPanel panel = new WindowPanel();
+		panel.setTitle("Protein `"+filename+"`");
+		panel.setDockerNode(dockerspace.getNode("center"));
+		panel.setDockerSpace(new DockerSpace.Builder().build());
+		
+		Protein p = Protein.buildFromFile(filename);
+		
+		Scene sp = sceneManager.create("protein"+filename);
+		Scene sb = sceneManager.create("backbone"+filename);
+		
+		Container proteinMesh = p.getMesh();
+		Container proteinBackboneMesh = p.getBackboneMesh();
+		
+		proteinMesh.translate(proteinMesh.getCenter().mul(-1.0f));
+		proteinBackboneMesh.translate(proteinBackboneMesh.getCenter().mul(-1.0f));
+		
+		sp.add(proteinMesh);
+		sb.add(proteinBackboneMesh);
+		
+
+		sp.getCamera().fitView(proteinMesh);
+		sb.getCamera().fitView(proteinBackboneMesh);
+		
+		
+		WindowPanel sceneProtein = new WindowPanel();
+		sceneProtein.setTitle("Protein View Scene##"+filename);
+		sceneProtein.setDockerNode(panel.getDockerSpace().getBaseNode());
+		sceneProtein.setBindingOnDraw((display.event.Sender sender, display.event.Data data) -> {
+			ImGui.beginChild("GameRender##"+filename);
+			proteinMesh.rotate((float)Math.toRadians(20*0.01), new Vector3f(0,1,0));
+			proteinBackboneMesh.rotate((float)Math.toRadians(20*0.01), new Vector3f(0,1,0));
+			ImVec2 childSize = ImGui.getWindowSize();
+			sp.sendEvent(new ResizeEvent().setData(childSize));
+			sp.draw();
+			if (sp.hasTexture()) ImGui.image(sp.getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
+			ImGui.endChild();
+		});
+		panel.addChildren(sceneProtein);
+		
+		
+		WindowPanel sceneBackbone = new WindowPanel();
+		sceneBackbone.setTitle("Backbone View Scene##"+filename);
+		sceneBackbone.setDockerNode(panel.getDockerSpace().getBaseNode());
+		sceneBackbone.setBindingOnDraw((display.event.Sender sender, display.event.Data data) -> {
+			ImGui.beginChild("GameRender2##"+filename);
+			proteinBackboneMesh.rotate((float)Math.toRadians(20*0.01), new Vector3f(0,1,0));
+			proteinMesh.rotate((float)Math.toRadians(20*0.01), new Vector3f(0,1,0));
+			ImVec2 childSize = ImGui.getWindowSize();
+			sb.sendEvent(new ResizeEvent().setData(childSize));
+			sb.draw();
+			if (sb.hasTexture()) ImGui.image(sb.getTexture().getID(), childSize.x, childSize.y, 0, 1, 1, 0);
+			ImGui.endChild();
+		});
+		panel.addChildren(sceneBackbone);
+		
+		
+		
+		
+		
+		
+		
+		
+		proteinPanel.add(panel);
+		add(panel);
+		
+		/*Scene sp = gui.sceneManager.create("protein");
+		Scene sb = gui.sceneManager.create("backbone");
+		
+		Protein p = Protein.buildFromFile("data.txt");
+		
+		gui.protein = p.getMesh();
+		gui.proteinBackbone = p.getBackboneMesh();
+		
+		sp.add(gui.protein);
+		sb.add(gui.proteinBackbone);
+		
+
+		sp.getCamera().setPosition(new Vector3f(5,8,50));
+		sb.getCamera().setPosition(new Vector3f(5,8,50));*/
 	}
 	
 }
