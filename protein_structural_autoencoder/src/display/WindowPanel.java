@@ -71,6 +71,7 @@ public class WindowPanel extends Component {
 	private int internalFlags = 0;
 	private boolean initialized = false;
 	private Map<String,Component> children = new LinkedHashMap<>();
+	private Float scrollY = null;
 	
 	
 	public boolean isOpen() {
@@ -151,6 +152,10 @@ public class WindowPanel extends Component {
 				entry.getValue().update();
 			}
 			eventManager.fire("draw");
+			if (scrollY!=null) {
+				ImGui.setScrollHereY(scrollY);
+				scrollY = null;
+			}
 		}
 		ImGui.end();
 		endDock();
@@ -199,6 +204,15 @@ public class WindowPanel extends Component {
 		ImGui.begin(title);
 		ondraw.run();
 		ImGui.end();
+	}
+
+
+	public void scrollYDown() {
+		scrollY = 1.0f;
+	}
+	
+	public void scrollYTop() {
+		scrollY = 0.0f;
 	}
 	
 }
