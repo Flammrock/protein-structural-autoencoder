@@ -1,18 +1,18 @@
 package bio;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.joml.Vector3f;
 
+import display.event.Callback;
+import display.event.Manager;
+import display.eventtypes.AtomLoadEvent;
+
 public class Atom {
+	
+	private static Manager eventManager = new Manager();
+	public static void setBindingOnLoad(Callback c) {
+		eventManager.register(AtomLoadEvent.Name, c);
+	}
 
 	private Vector3f position;
 	private String type;
@@ -27,7 +27,8 @@ public class Atom {
 	static Atom load(String data) {
 		bio.pdb.records.Atom record = new bio.pdb.records.Atom(bio.pdb.Record.ATOM.parse(data));
 		Vector3f pos = new Vector3f(record.x,record.y,record.z);
-		//System.out.println("type :"+record.name+", pos: "+pos.toString()+", reqSeq: "+record.resSeq);
+		//System.out.println("type :"+record.name+", pos: "+(pos.x+","+pos.y+","+pos.z)+", reqSeq: "+record.resSeq);
+		eventManager.fire(new AtomLoadEvent().setData(record));
 		return new Atom(record.name,pos,record.resSeq);
 	}
 

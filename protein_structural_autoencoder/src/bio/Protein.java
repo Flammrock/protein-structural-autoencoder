@@ -8,6 +8,11 @@ import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
+import display.event.Callback;
+import display.event.Manager;
+import display.eventtypes.AtomLoadEvent;
+import display.eventtypes.ProteinLoadEndEvent;
+import display.eventtypes.ProteinLoadStartEvent;
 import display.internal.Color3f;
 import display.internal.Container;
 import display.internal.CylinderGeometry;
@@ -20,16 +25,28 @@ import bio.pdb.Record;
 
 public class Protein {
 	
+	private static Manager eventManager = new Manager();
+	public static void setBindingOnLoadStart(Callback c) {
+		eventManager.register(ProteinLoadStartEvent.Name, c);
+	}
+	public static void setBindingOnLoadEnd(Callback c) {
+		eventManager.register(ProteinLoadEndEvent.Name, c);
+	}
 	
 	private List<Residue> residues;
+	private String filename;
 	
-	private Protein(List<Residue> r) {
+	private Protein(String filename, List<Residue> r) {
+		this.filename = filename;
 		residues = r;
 	}
 	
 	public static Protein buildFromFile(String filename) {
+		Protein p = null;
+		eventManager.fire(new ProteinLoadStartEvent().setData(p));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(Protein.class.getResourceAsStream(filename)));
-		return new Protein(
+		p = new Protein(
+			filename,
 			reader.lines()
 			.filter(Record.is(Record.ATOM))
 			.map(Atom::load)
@@ -41,10 +58,16 @@ public class Protein {
 			.collect(Collectors.toList())
 		)
 		;
+		eventManager.fire(new ProteinLoadEndEvent().setData(p));
+		return p;
 	}
 	
 	public List<Residue> getResidues() {
 		return residues;
+	}
+	
+	public String getOriginalFilename() {
+		return filename;
 	}
 	
 	
