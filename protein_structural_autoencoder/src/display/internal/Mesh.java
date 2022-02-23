@@ -6,6 +6,9 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import display.Color;
 
 public class Mesh {
 	
@@ -23,6 +26,8 @@ public class Mesh {
 	private Transform transform;
 	
 	private float[] vertices;
+	private Vector4f color;
+	private Vector4f highlightColor;
 	private int[] indices;
 	
 	
@@ -30,6 +35,9 @@ public class Mesh {
 		this.isCreatedState = false;
 		this.isDestroyState = false;
 		this.transform = new Transform();
+		Vector3f c = mat.getColor();
+		this.color = new Vector4f(c.x,c.y,c.z,1.0f);
+		this.highlightColor = null;
 		geo.setColor(mat.getColor());
 		this.vertices = computeNormal(geo.getVertices(), geo.getIndices());
 		this.indices = geo.getIndices();
@@ -38,7 +46,7 @@ public class Mesh {
 	public boolean create() {
 		
 		if (isCreatedState) return false;
-		if (this.isDestroy()) return false;
+		//if (this.isDestroy()) return false;
 		
 		vertexArrayObject = glGenVertexArrays();
 		glBindVertexArray(vertexArrayObject);
@@ -60,6 +68,7 @@ public class Mesh {
 		indexCount = indices.length;
 		
 		isCreatedState = true;
+		isDestroyState = false;
 		
 		return true;
 	}
@@ -108,6 +117,7 @@ public class Mesh {
 		glDeleteBuffers(vertexBufferObjectIndices);
 		glDeleteVertexArrays(vertexArrayObject);
 		this.isDestroyState = true;
+		this.isCreatedState = false;
 	}
 	
 	
@@ -122,6 +132,12 @@ public class Mesh {
 		glEnableVertexAttribArray(2);
 		
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		
+		if (highlightColor==null) {
+			Shader.SHADER.setColor(color.x,color.y,color.z,color.w);
+		} else {
+			Shader.SHADER.setColor(highlightColor.x,highlightColor.y,highlightColor.z,highlightColor.w);
+		}
 
 		
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
@@ -153,5 +169,30 @@ public class Mesh {
 
 	public void translate(Vector3f t) {
 		transform.translate(t);
+	}
+	
+	private void applyColor(Vector3f c) {
+		for (int i = 0; i < vertices.length; i+=(Mesh.VERTEX_SIZE)) {
+			vertices[i+3] = c.x;
+			vertices[i+4] = c.y;
+			vertices[i+5] = c.z;
+		}
+		destroy();
+		create();
+	}
+
+	public void colorize(Color c) {
+		color = new Vector4f(c.r,c.g,c.b,c.alpha);
+		//applyColor(color);
+	}
+	
+	public void setHighlight(Color c, boolean v) {
+		if (v) {
+			//applyColor(new Vector3f(c.r,c.g,c.b));
+			highlightColor = new Vector4f(c.r,c.g,c.b,c.alpha);
+		} else {
+			//applyColor(color);
+			highlightColor = null;
+		}
 	}
 }

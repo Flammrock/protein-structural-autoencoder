@@ -2,6 +2,7 @@ package display;
 
 import imgui.ImGui;
 import imgui.ImGuiWindowClass;
+import imgui.ImVec2;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
@@ -54,6 +55,26 @@ public abstract class Component extends Identifier {
 	public void endDock() {
 		if (dockerNode==null) return;
 		if (!(this instanceof WindowPanel)) ImGui.end();
+	}
+	
+	
+	
+	public ImVec2 getContentRegionMax() {
+		ImVec2 max = new ImVec2();
+		ImGui.getWindowContentRegionMax(max);
+		return max;
+	}
+	
+	public ImVec2 getContentRegionMin() {
+		ImVec2 min = new ImVec2();
+		ImGui.getWindowContentRegionMin(min);
+		return min;
+	}
+	
+	public ImVec2 getContentRegionSize() {
+		ImVec2 max = getContentRegionMax();
+		ImVec2 min = getContentRegionMin();
+		return new ImVec2(max.x-min.x,max.y-min.y);
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import bio.Protein;
+import bio.Residue;
 import display.Button;
 import display.Color;
 import display.Console;
@@ -133,21 +134,47 @@ public class Gui extends UI {
 	public void log(Console.Level level, String data) {
 		console.log(level,data);
 	}
+	
+	private void setView(Protein p, Container m, Container bm) {
+		view.clearChildren();
+		List<Residue> rs = p.getResidues();
+		for (Residue r : rs) {
+			Button b = new Button("Residue n°"+r.getID());
+			b.setFullWidth(true);
+			b.setBindingOnMouseIn((display.event.Sender sender, display.event.Data data) -> {
+				System.out.println("BUTTON `"+b.getText()+"` MOUSE IN!");
+				Protein.setHighlightResidue(p,r,m,bm,true);
+			});
+			b.setBindingOnMouseOut((display.event.Sender sender, display.event.Data data) -> {
+				System.out.println("BUTTON `"+b.getText()+"` MOUSE OUT!");
+				Protein.setHighlightResidue(p,r,m,bm,false);
+			});
+			view.addChildren(b);
+		}
+	}
 
 	public void loadProtein(String filename) {
+		
+		Protein p = Protein.buildFromFile(filename);
+		
+		Container proteinMesh = p.getMesh();
+		Container proteinBackboneMesh = p.getBackboneMesh();
 		
 		WindowPanel panel = new WindowPanel();
 		panel.setTitle("Protein `"+filename+"`");
 		panel.setDockerNode(dockerspace.getNode("center"));
 		panel.setDockerSpace(new DockerSpace.Builder().build());
 		
-		Protein p = Protein.buildFromFile(filename);
+		panel.setBindingOnFocus((display.event.Sender sender, display.event.Data data) -> {
+			setView(p,proteinMesh,proteinBackboneMesh);
+		});
+		
+		
 		
 		Scene sp = sceneManager.create("protein"+filename);
 		Scene sb = sceneManager.create("backbone"+filename);
 		
-		Container proteinMesh = p.getMesh();
-		Container proteinBackboneMesh = p.getBackboneMesh();
+		
 		
 		proteinMesh.translate(proteinMesh.getCenter().mul(-1.0f));
 		proteinBackboneMesh.translate(proteinBackboneMesh.getCenter().mul(-1.0f));

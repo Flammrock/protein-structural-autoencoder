@@ -94,6 +94,9 @@ public class Window {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 		
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		
 		//GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		//glfwSetWindowPos(window, (videoMode.width() - 640)/2, (videoMode.height() - 480)/2);
 		

@@ -7,6 +7,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import display.Color;
+
 public class Container {
 
 	private List<Mesh> meshs;
@@ -93,6 +95,20 @@ public class Container {
 		Vector3f center = getCenter();
 		for (Mesh mesh : meshs) {
 			mesh.getTransform().rotate(angle, axis, center);
+		}
+	}
+
+	public void colorize(int pos, int size, Color c) {
+		int s = meshs.size();
+		for (int i = pos; (i < pos+size) && (i < s); i++) {
+			meshs.get(i).colorize(c);
+		}
+	}
+	
+	public void setHighlight(int pos, int size, Color c, boolean v) {
+		int s = meshs.size();
+		for (int i = pos; (i < pos+size) && (i < s); i++) {
+			meshs.get(i).setHighlight(c, v);
 		}
 	}
 	

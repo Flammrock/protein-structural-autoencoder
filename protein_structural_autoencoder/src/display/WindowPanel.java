@@ -103,6 +103,10 @@ public class WindowPanel extends Component {
 		eventManager.register("open", c);
 	}
 	
+	public void setBindingOnFocus(display.event.Callback c) {
+		eventManager.register("focus", c);
+	}
+	
 	private void computePosition() {
 		ImVec2 regionMinCurrent = ImGui.getWindowContentRegionMin();
 		ImVec2 regionMaxCurrent = ImGui.getWindowContentRegionMax();
@@ -147,6 +151,9 @@ public class WindowPanel extends Component {
 		if (opened) {
 			position = ImGui.getWindowPos();
 			size = ImGui.getWindowSize();
+			if (ImGui.isWindowFocused()) {
+				eventManager.fire("focus");
+			}
 			if (dockerspace!=null) dockerspace.init();
 			for (Map.Entry<String,Component> entry : children.entrySet()) {
 				entry.getValue().update();
@@ -213,6 +220,11 @@ public class WindowPanel extends Component {
 	
 	public void scrollYTop() {
 		scrollY = 0.0f;
+	}
+
+
+	public void clearChildren() {
+		children.clear();
 	}
 	
 }

@@ -2,12 +2,14 @@ package bio;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
+import display.Color;
 import display.event.Callback;
 import display.event.Manager;
 import display.eventtypes.AtomLoadEvent;
@@ -35,10 +37,27 @@ public class Protein {
 	
 	private List<Residue> residues;
 	private String filename;
+	private Map<Integer,Integer> residuesPositionIndex;
+	private int numAtoms;
 	
 	private Protein(String filename, List<Residue> r) {
 		this.filename = filename;
 		residues = r;
+		residuesPositionIndex = new HashMap<>();
+		buildIndex();
+	}
+	
+	public int size() {
+		return numAtoms;
+	}
+	
+	private void buildIndex() {
+		int pos = 0;
+		for (Residue r : residues) {
+			residuesPositionIndex.put(r.getID(),pos);
+			pos += r.size();
+		}
+		numAtoms = pos;
 	}
 	
 	public static Protein buildFromFile(String filename) {
@@ -181,6 +200,13 @@ public class Protein {
 		}
 		}
 		return container;
+	}
+	public static void setHighlightResidue(Protein p, Residue r, Container m, Container bm, boolean b) {
+		int pos = p.residuesPositionIndex.get(r.getID());
+		Color g = new Color(Color.Grey);
+		g.alpha = 0.3f;
+		m.setHighlight(0,m.getMeshs().size(),g,b);
+		m.setHighlight(pos+(r.getID()-p.residues.get(0).getID()),r.size(),Color.Red,b);
 	}
 	
 }

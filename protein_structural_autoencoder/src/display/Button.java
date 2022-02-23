@@ -15,9 +15,26 @@ public class Button extends Component {
 	private Color hoverColor      = null;
 	private Color activeColor     = null;
 	
+	private boolean isfullWidth  = false;
+	private boolean isfullHeight = false;
+	
+	private boolean isHovered = false;
+	
 	public Button(String text) {
 		this.text = text;
 	}
+	
+	
+	
+	public void setBindingOnMouseIn(display.event.Callback c) {
+		eventManager.register("mousein", c);
+	}
+	
+	public void setBindingOnMouseOut(display.event.Callback c) {
+		eventManager.register("mouseout", c);
+	}
+	
+	
 	
 	public String getText() {
 		return text;
@@ -33,6 +50,14 @@ public class Button extends Component {
 	
 	public float getHeight() {
 		return size.y;
+	}
+	
+	public void setFullWidth(boolean v) {
+		isfullWidth = v;
+	}
+	
+	public void setFullHeight(boolean v) {
+		isfullHeight = v;
 	}
 	
 	public Button setWidth(float width) {
@@ -91,7 +116,24 @@ public class Button extends Component {
 			pushstyle++;
 		}
 		
-		ImGui.button(text,size.x,size.y);
+		ImVec2 regionSize = getContentRegionSize();
+		ImGui.button(text,isfullWidth?regionSize.x:size.x,isfullHeight?regionSize.y:size.y);
+		
+		
+		/* track internal imgui event */
+		boolean s_isHovered = isHovered;
+		isHovered = ImGui.isItemHovered();
+		
+		/* propagate only if internal state changed */
+		if (s_isHovered != isHovered) {
+			if (isHovered) {
+				eventManager.fire("mousein");
+			} else {
+				eventManager.fire("mouseout");
+			}
+		}
+		
+		
 		ImGui.popStyleColor(pushstyle);
 		
 		//ImGui.button(text);

@@ -27,6 +27,10 @@ public class Residue {
 	public int getID() {
 		return ID;
 	}
+	
+	public int size() {
+		return atoms.size();
+	}
 
 	public Residue(int ID, List<Atom> l) {
 		this.ID = ID;
