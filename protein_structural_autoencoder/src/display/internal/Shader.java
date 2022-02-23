@@ -16,7 +16,7 @@ public class Shader {
 	private int vertexShader, fragmentShader, program;
 	
 	private int uniMatProjection, uniMatTransformWorld, uniMatTransformObject;
-	private int lightPos, lightColor;
+	private int lightPos, lightColor, dynColor;
 	
 	private boolean isCreate;
 	
@@ -70,6 +70,7 @@ public class Shader {
 		uniMatTransformObject = glGetUniformLocation(program, "transformObject");
 		lightPos = glGetUniformLocation(program, "lightPos");
 		lightColor = glGetUniformLocation(program, "lightColor");
+		dynColor = glGetUniformLocation(program, "dynColor");
 		
 		isCreate = true;
 		
@@ -139,6 +140,11 @@ public class Shader {
 		}
 		
 		return sourceBuilder.toString();
+	}
+
+	public void setColor(float r, float g, float b, float a) {
+		float vcol[] = new float[]{r,g,b,a};
+		glUniform4fv(dynColor, vcol);
 	}
 	
 }

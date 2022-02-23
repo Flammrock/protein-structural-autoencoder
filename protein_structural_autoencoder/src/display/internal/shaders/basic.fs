@@ -7,6 +7,7 @@ in vec3 fragPos;
 
 uniform vec3 lightPos;
 uniform vec3 lightColor;
+uniform vec4 dynColor;
 
 void main() {
 
@@ -18,5 +19,5 @@ void main() {
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor + 0.1;
 
-	fragColor = vec4((ambient + diffuse) * vertexColor, 1.0);
+	fragColor = vec4((ambient + diffuse) * vec3(dynColor), dynColor.a);
 }
