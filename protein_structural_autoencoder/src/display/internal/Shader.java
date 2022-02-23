@@ -142,9 +142,8 @@ public class Shader {
 		return sourceBuilder.toString();
 	}
 
-	public void setColor(float r, float g, float b, float a) {
-		float vcol[] = new float[]{r,g,b,a};
-		glUniform4fv(dynColor, vcol);
+	public void setColor(Color c) {
+		glUniform4fv(dynColor, c.data());
 	}
 	
 }

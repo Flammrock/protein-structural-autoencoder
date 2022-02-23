@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import display.WindowPanel.Flag;
 import display.event.Data;
 import display.event.Sender;
+import display.internal.Color;
 
 public class Console extends Component {
 	

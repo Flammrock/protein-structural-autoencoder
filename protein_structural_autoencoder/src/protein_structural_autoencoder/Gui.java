@@ -1,7 +1,6 @@
 package protein_structural_autoencoder;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.joml.Vector3f;
@@ -9,7 +8,6 @@ import org.joml.Vector3f;
 import bio.Protein;
 import bio.Residue;
 import display.Button;
-import display.Color;
 import display.Console;
 import display.DockerSpace;
 import display.Label;

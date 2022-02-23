@@ -15,11 +15,11 @@ public abstract class Geometry {
 		return indices;
 	}
 	
-	public void setColor(Vector3f color) {
+	public void setColor(Color color) {
 		for (int i = 0; i < vertices.length; i+=(Mesh.VERTEX_SIZE-3)) {
-			vertices[i+3] = color.x;
-			vertices[i+4] = color.y;
-			vertices[i+5] = color.z;
+			vertices[i+3] = color.r;
+			vertices[i+4] = color.g;
+			vertices[i+5] = color.b;
 		}
 	}
 	

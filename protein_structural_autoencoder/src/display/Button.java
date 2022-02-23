@@ -1,5 +1,6 @@
 package display;
 
+import display.internal.Color;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;

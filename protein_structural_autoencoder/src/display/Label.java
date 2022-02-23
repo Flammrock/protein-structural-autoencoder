@@ -1,7 +1,7 @@
 package display;
 
+import display.internal.Color;
 import imgui.ImGui;
-import imgui.ImVec4;
 
 public class Label extends Component {
 

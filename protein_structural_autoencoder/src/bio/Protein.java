@@ -9,13 +9,12 @@ import java.util.stream.Collectors;
 
 import org.joml.Vector3f;
 
-import display.Color;
 import display.event.Callback;
 import display.event.Manager;
 import display.eventtypes.AtomLoadEvent;
 import display.eventtypes.ProteinLoadEndEvent;
 import display.eventtypes.ProteinLoadStartEvent;
-import display.internal.Color3f;
+import display.internal.Color;
 import display.internal.Container;
 import display.internal.CylinderGeometry;
 import display.internal.Material;
@@ -100,21 +99,21 @@ public class Protein {
 		Mesh spheremesh4 = null;
 		for (Residue r : residues) {
 		for (Atom atom : r.getAtoms()) {
-			Vector3f color;
+			Color color;
 			if (atom.getType().substring(0, 1).equals("H")) {
-				color = Color3f.WHITE;
+				color = Color.White;
 			} else if (atom.getType().length() >= 2 && atom.getType().substring(0, 2).equals("CA")) {
-				color = Color3f.MAGENTA;
+				color = Color.Magenta;
 			} else if (atom.getType().substring(0, 1).equals("C")) {
-				color = Color3f.GRAY;
+				color = Color.Gray;
 			} else if (atom.getType().substring(0, 1).equals("N")) {
-				color = Color3f.BLUE;
+				color = Color.Blue;
 			} else if (atom.getType().substring(0, 1).equals("O")) {
-				color = Color3f.RED;
+				color = Color.Red;
 			} else if (atom.getType().substring(0, 1).equals("S")) {
-				color = Color3f.YELLOW;
+				color = Color.Yellow;
 			} else {
-				color = Color3f.MAGENTA;
+				color = Color.Magenta;
 			}
 	        Mesh spheremesh3 = new Mesh(testsphere3, new Material(color));
 	        spheremesh3.setPosition(atom.getPosition());
@@ -132,7 +131,7 @@ public class Protein {
 					Vector3f pos = new Vector3f();
 					p1.add(p2,pos);pos.div(2.0f);
 					CylinderGeometry cylinderGeo2 = new CylinderGeometry(0.3f, dist);
-					Mesh cylinder2 = new Mesh(cylinderGeo2, new Material(Color3f.MAGENTA));
+					Mesh cylinder2 = new Mesh(cylinderGeo2, new Material(Color.Magenta));
 					Vector3f v = new Vector3f(0,0,1);
 					
 					cylinder2.getTransform().setInternalRotation(QuaternionHelper.setFromUnitVectors(v, dir));
@@ -155,19 +154,19 @@ public class Protein {
 		Mesh spheremesh4 = null;
 		for (Residue r : residues) {
 		for (Atom atom : r.getAtoms()) {
-			Vector3f color;
+			Color color;
 			if (atom.getType().substring(0, 1).equals("H")) {
-				color = Color3f.WHITE;
+				color = Color.White;
 			} else if (atom.getType().substring(0, 1).equals("C")) {
-				color = Color3f.GRAY;
+				color = Color.Gray;
 			} else if (atom.getType().substring(0, 1).equals("N")) {
-				color = Color3f.BLUE;
+				color = Color.Blue;
 			} else if (atom.getType().substring(0, 1).equals("O")) {
-				color = Color3f.RED;
+				color = Color.Red;
 			} else if (atom.getType().substring(0, 1).equals("S")) {
-				color = Color3f.YELLOW;
+				color = Color.Yellow;
 			} else {
-				color = Color3f.MAGENTA;
+				color = Color.Magenta;
 			}
 			if (atom.getType().length() >= 2 && atom.getType().substring(0, 2).equals("CA")) {
 	        	Mesh spheremesh3 = new Mesh(testsphere3, new Material(color));
@@ -185,7 +184,7 @@ public class Protein {
 					Vector3f pos = new Vector3f();
 					p1.add(p2,pos);pos.div(2.0f);
 					CylinderGeometry cylinderGeo2 = new CylinderGeometry(0.5f, dist);
-					Mesh cylinder2 = new Mesh(cylinderGeo2, new Material(Color3f.GRAY));
+					Mesh cylinder2 = new Mesh(cylinderGeo2, new Material(Color.Gray));
 					Vector3f v = new Vector3f(0,0,1);
 					
 					cylinder2.getTransform().setInternalRotation(QuaternionHelper.setFromUnitVectors(v, dir));
@@ -203,8 +202,7 @@ public class Protein {
 	}
 	public static void setHighlightResidue(Protein p, Residue r, Container m, Container bm, boolean b) {
 		int pos = p.residuesPositionIndex.get(r.getID());
-		Color g = new Color(Color.Grey);
-		g.alpha = 0.3f;
+		Color g = new Color(Color.Grey,0.3f);
 		m.setHighlight(0,m.getMeshs().size(),g,b);
 		m.setHighlight(pos+(r.getID()-p.residues.get(0).getID()),r.size(),Color.Red,b);
 	}

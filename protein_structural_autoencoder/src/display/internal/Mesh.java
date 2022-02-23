@@ -6,9 +6,6 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import display.Color;
 
 public class Mesh {
 	
@@ -26,8 +23,8 @@ public class Mesh {
 	private Transform transform;
 	
 	private float[] vertices;
-	private Vector4f color;
-	private Vector4f highlightColor;
+	private Color color;
+	private Color highlightColor;
 	private int[] indices;
 	
 	
@@ -35,8 +32,7 @@ public class Mesh {
 		this.isCreatedState = false;
 		this.isDestroyState = false;
 		this.transform = new Transform();
-		Vector3f c = mat.getColor();
-		this.color = new Vector4f(c.x,c.y,c.z,1.0f);
+		this.color = mat.getColor();
 		this.highlightColor = null;
 		geo.setColor(mat.getColor());
 		this.vertices = computeNormal(geo.getVertices(), geo.getIndices());
@@ -134,9 +130,9 @@ public class Mesh {
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		
 		if (highlightColor==null) {
-			Shader.SHADER.setColor(color.x,color.y,color.z,color.w);
+			Shader.SHADER.setColor(color);
 		} else {
-			Shader.SHADER.setColor(highlightColor.x,highlightColor.y,highlightColor.z,highlightColor.w);
+			Shader.SHADER.setColor(highlightColor);
 		}
 
 		
@@ -170,28 +166,15 @@ public class Mesh {
 	public void translate(Vector3f t) {
 		transform.translate(t);
 	}
-	
-	private void applyColor(Vector3f c) {
-		for (int i = 0; i < vertices.length; i+=(Mesh.VERTEX_SIZE)) {
-			vertices[i+3] = c.x;
-			vertices[i+4] = c.y;
-			vertices[i+5] = c.z;
-		}
-		destroy();
-		create();
-	}
 
 	public void colorize(Color c) {
-		color = new Vector4f(c.r,c.g,c.b,c.alpha);
-		//applyColor(color);
+		color = new Color(c);
 	}
 	
 	public void setHighlight(Color c, boolean v) {
 		if (v) {
-			//applyColor(new Vector3f(c.r,c.g,c.b));
-			highlightColor = new Vector4f(c.r,c.g,c.b,c.alpha);
+			highlightColor = new Color(c);
 		} else {
-			//applyColor(color);
 			highlightColor = null;
 		}
 	}

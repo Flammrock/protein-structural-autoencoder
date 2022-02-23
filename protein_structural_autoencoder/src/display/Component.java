@@ -4,10 +4,6 @@ import imgui.ImGui;
 import imgui.ImGuiWindowClass;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCond;
-import imgui.flag.ImGuiDockNodeFlags;
-import imgui.flag.ImGuiStyleVar;
-import imgui.flag.ImGuiWindowFlags;
-import imgui.type.ImBoolean;
 
 public abstract class Component extends Identifier {
 	

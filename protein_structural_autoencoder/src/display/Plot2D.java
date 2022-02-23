@@ -1,14 +1,8 @@
 package display;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import imgui.ImDrawList;
 import imgui.ImGui;
 import imgui.ImVec2;
-import imgui.ImVec4;
 import imgui.extension.implot.ImPlot;
-import imgui.extension.implot.flag.ImPlotAxisFlags;
 
 public class Plot2D extends Component {
 	

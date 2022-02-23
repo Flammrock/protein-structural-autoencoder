@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import display.WindowPanel.Flag;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiTreeNodeFlags;
@@ -32,6 +31,14 @@ public class Navigation extends Component {
 			this(name);
 			this.flags = EnumSet.copyOf(flags);
 			this.internalFlags = Flag.getImGuiTreeNodeFlags(flags);
+		}
+
+		public EnumSet<Flag> getFlags() {
+			return flags;
+		}
+
+		public void setFlags(EnumSet<Flag> flags) {
+			this.flags = flags;
 		}
 
 		public String getName() {

@@ -3,11 +3,7 @@ package display.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import display.Color;
 
 public class Container {
 

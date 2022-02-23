@@ -1,16 +1,14 @@
 package display.internal;
 
-import org.joml.Vector3f;
-
 public class Material {
 
-	protected Vector3f color;
+	protected Color color;
 	
-	public Material(Vector3f color) {
+	public Material(Color color) {
 		this.color = color;
 	}
 
-	public Vector3f getColor() {
+	public Color getColor() {
 		return color;
 	}
 	
