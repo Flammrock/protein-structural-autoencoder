@@ -1,6 +1,7 @@
 package protein_structural_autoencoder;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.joml.Vector3f;
@@ -12,6 +13,7 @@ import display.Console;
 import display.DockerSpace;
 import display.Label;
 import display.Navigation;
+import display.Navigation.Item.Flag;
 import display.Plot2D;
 import display.UI;
 import display.WindowPanel;
@@ -134,21 +136,29 @@ public class Gui extends UI {
 	}
 	
 	private void setView(Protein p, Container m, Container bm) {
+		Navigation.Item itemInfo = new Navigation.Item("Information");
+		
+		itemInfo.addChildren(new Label("Original File. . . . . . . . . . .: "+p.getOriginalFilename()));
+		itemInfo.addChildren(new Label("Amount of Atoms. . . . . . . . . .: "+p.size()));
+		itemInfo.addChildren(new Label("Amount of Residues. . . . . . . . : "+p.getResidues().size()));
+		itemInfo.addChildren(new Label("Amount of Carbon Alpha. . . . . . : "+p.getResidues().size()));
+		
+		Navigation.Item itemResi = new Navigation.Item("Residues");
+		Navigation n = new Navigation.Builder().addItem(itemInfo).addItem(itemResi).build();
 		view.clearChildren();
 		List<Residue> rs = p.getResidues();
 		for (Residue r : rs) {
-			Button b = new Button("Residue n°"+r.getID());
-			b.setFullWidth(true);
+			Navigation.Item b = new Navigation.Item("Residue n°"+r.getID(),EnumSet.of(Navigation.Item.Flag.Closed));
+			//b.setFullWidth(true);
 			b.setBindingOnMouseIn((display.event.Sender sender, display.event.Data data) -> {
-				System.out.println("BUTTON `"+b.getText()+"` MOUSE IN!");
 				Protein.setHighlightResidue(p,r,m,bm,true);
 			});
 			b.setBindingOnMouseOut((display.event.Sender sender, display.event.Data data) -> {
-				System.out.println("BUTTON `"+b.getText()+"` MOUSE OUT!");
 				Protein.setHighlightResidue(p,r,m,bm,false);
 			});
-			view.addChildren(b);
+			itemResi.addChildren(b);
 		}
+		view.addChildren(n);
 	}
 
 	public void loadProtein(String filename) {

@@ -11,7 +11,7 @@ import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
-public class WindowPanel extends Component {
+public class WindowPanel extends Component implements Box {
 	
 	
 	public enum Flag {
@@ -190,14 +190,17 @@ public class WindowPanel extends Component {
 		return dockerspace;
 	}
 	
+	@Override
 	public void addChildren(Component component) {
 		children.put(component.getInternalID(), component);
 	}
 	
+	@Override
 	public boolean hasChildren(Component component) {
 		return children.containsKey(component.getInternalID());
 	}
 	
+	@Override
 	public void removeChildren(Component component) {
 		if (!hasChildren(component)) return;
 		children.remove(component.getInternalID());
