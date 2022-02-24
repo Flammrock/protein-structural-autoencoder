@@ -11,7 +11,7 @@ import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
-public class WindowPanel extends Component implements Box {
+public class WindowPanel extends Box {
 	
 	
 	public enum Flag {
@@ -69,7 +69,6 @@ public class WindowPanel extends Component implements Box {
 	private DockerSpace dockerspace = null;
 	private int internalFlags = 0;
 	private boolean initialized = false;
-	private Map<String,Component> children = new LinkedHashMap<>();
 	private Float scrollY = null;
 	
 	
@@ -154,9 +153,7 @@ public class WindowPanel extends Component implements Box {
 				eventManager.fire("focus");
 			}
 			if (dockerspace!=null) dockerspace.init();
-			for (Map.Entry<String,Component> entry : children.entrySet()) {
-				entry.getValue().update();
-			}
+			drawChildren();
 			eventManager.fire("draw");
 			if (scrollY!=null) {
 				ImGui.setScrollHereY(scrollY);
@@ -190,22 +187,6 @@ public class WindowPanel extends Component implements Box {
 		return dockerspace;
 	}
 	
-	@Override
-	public void addChildren(Component component) {
-		children.put(component.getInternalID(), component);
-	}
-	
-	@Override
-	public boolean hasChildren(Component component) {
-		return children.containsKey(component.getInternalID());
-	}
-	
-	@Override
-	public void removeChildren(Component component) {
-		if (!hasChildren(component)) return;
-		children.remove(component.getInternalID());
-	}
-	
 	
 	@Deprecated
 	public static void draw(String title, ImVec2 size, Runnable ondraw) {
@@ -222,11 +203,6 @@ public class WindowPanel extends Component implements Box {
 	
 	public void scrollYTop() {
 		scrollY = 0.0f;
-	}
-
-
-	public void clearChildren() {
-		children.clear();
 	}
 	
 }

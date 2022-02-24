@@ -135,7 +135,11 @@ public class Gui extends UI {
 		console.log(level,data);
 	}
 	
-	private void setView(Protein p, Container m, Container bm) {
+	private void setView(Protein p) {
+		
+		Container m = p.getMesh();
+		Container bm = p.getBackboneMesh();
+		
 		Navigation.Item itemInfo = new Navigation.Item("Information");
 		
 		itemInfo.addChildren(new Label("Original File. . . . . . . . . . .: "+p.getOriginalFilename()));
@@ -174,7 +178,7 @@ public class Gui extends UI {
 		panel.setDockerSpace(new DockerSpace.Builder().build());
 		
 		panel.setBindingOnFocus((display.event.Sender sender, display.event.Data data) -> {
-			setView(p,proteinMesh,proteinBackboneMesh);
+			setView(p);
 		});
 		
 		

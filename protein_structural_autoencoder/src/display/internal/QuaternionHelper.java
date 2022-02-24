@@ -22,5 +22,17 @@ public class QuaternionHelper {
 		}
 		return new Quaternionf(v1.x, v1.y, v1.z, r).normalize();
 	}
+	
+	static public Quaternionf getRotationBetween(Vector3f start, Vector3f end) {
+		start = new Vector3f(start);
+		end = new Vector3f(end);
+		Vector3f dir = new Vector3f();
+		start.sub(end,dir);
+		dir.normalize();
+		Vector3f pos = new Vector3f();
+		start.add(end,pos);pos.div(2.0f);
+		Vector3f v = new Vector3f(0,0,1);
+		return QuaternionHelper.setFromUnitVectors(v, dir);
+	}
 
 }

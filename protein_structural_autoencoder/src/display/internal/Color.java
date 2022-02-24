@@ -13,18 +13,20 @@ public final class Color {
 	static public final Color Orange  = new Color(1.0f, 0.49f, 0.0f);
 	static public final Color White   = new Color(1.0f, 1.0f, 1.0f);
 	static public final Color Yellow  = new Color(1.0f, 0.92f, 0.016f);
+	static public final Color Purple  = new Color(0.5f, 0.0f, 0.5f);
 	
-	static public final Color DarkBlue    = new Color(0.0f, 0.0f, 1.0f).brighter(-0.4f);
-	static public final Color DarkCyan    = new Color(0.0f, 1.0f, 1.0f).brighter(-0.4f);
-	static public final Color DarkGray    = new Color(0.5f, 0.5f, 0.5f).brighter(-0.4f);
-	static public final Color DarkGreen   = new Color(0.0f, 1.0f, 0.0f).brighter(-0.4f);
-	static public final Color DarkGrey    = new Color(0.5f, 0.5f, 0.5f).brighter(-0.4f);
-	static public final Color DarkMagenta = new Color(1.0f, 0.0f, 1.0f).brighter(-0.4f);
-	static public final Color DarkRed     = new Color(1.0f, 0.0f, 0.0f).brighter(-0.4f);
-	static public final Color DarkOrange  = new Color(1.0f, 0.49f, 0.0f).brighter(-0.4f);
-	static public final Color DarkWhite   = new Color(1.0f, 1.0f, 1.0f).brighter(-0.4f);
-	static public final Color DarkYellow  = new Color(1.0f, 0.92f, 0.016f).brighter(-0.4f);
-
+	static public final Color DarkBlue    = Blue.brighter(-0.4f);
+	static public final Color DarkCyan    = Cyan.brighter(-0.4f);
+	static public final Color DarkGray    = Gray.brighter(-0.4f);
+	static public final Color DarkGreen   = Green.brighter(-0.4f);
+	static public final Color DarkGrey    = Grey.brighter(-0.4f);
+	static public final Color DarkMagenta = Magenta.brighter(-0.4f);
+	static public final Color DarkRed     = Red.brighter(-0.4f);
+	static public final Color DarkOrange  = Orange.brighter(-0.4f);
+	static public final Color DarkWhite   = White.brighter(-0.4f);
+	static public final Color DarkYellow  = Yellow.brighter(-0.4f);
+	static public final Color DarkPurple  = Purple.brighter(-0.4f);
+	
 	public final float r;
 	public final float g;
 	public final float b;

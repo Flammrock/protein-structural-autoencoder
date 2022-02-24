@@ -39,6 +39,10 @@ public class Mesh {
 		this.indices = geo.getIndices();
 	}
 	
+	public Color getColor() {
+		return new Color(color);
+	}
+	
 	public boolean create() {
 		
 		if (isCreatedState) return false;

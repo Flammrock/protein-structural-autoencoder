@@ -18,13 +18,12 @@ public class Navigation extends Component {
 		this.items = items;
 	}
 	
-	public static class Item extends Component implements Box {
+	public static class Item extends Box {
 		
 		private String name;
 		private String ID = getID();
 		private EnumSet<Flag> flags = Flag.NONE;
 		private int internalFlags = 0;
-		private Map<String,Component> children = new LinkedHashMap<>();
 		private boolean isHovered = false;
 		
 		public Item(String name) {
@@ -92,44 +91,15 @@ public class Navigation extends Component {
 			super.update();
 			ImGui.setNextItemOpen((!flags.contains(Flag.Opened) && !flags.contains(Flag.Closed)) ? true : (flags.contains(Flag.Opened) && !flags.contains(Flag.Closed)), ImGuiCond.Once);
 			if (ImGui.treeNodeEx(name+"##"+ID, internalFlags)) {
-				for (Map.Entry<String,Component> entry : children.entrySet()) {
-					entry.getValue().update();
-				}
+				drawChildren();
 				eventManager.fire("drawcontent");
 				ImGui.treePop();
 		    }
-			/* track internal imgui event */
-			boolean s_isHovered = isHovered;
-			isHovered = ImGui.isItemHovered();
-			
-			/* propagate only if internal state changed */
-			if (s_isHovered != isHovered) {
-				if (isHovered) {
-					eventManager.fire("mousein");
-				} else {
-					eventManager.fire("mouseout");
-				}
-			}
+			propagateEvents();
 		}
 		
 		public void setBindingOnContentDraw(display.event.Callback c) {
 			eventManager.register("drawcontent", c);
-		}
-
-		@Override
-		public void addChildren(Component component) {
-			children.put(component.getInternalID(), component);
-		}
-		
-		@Override
-		public boolean hasChildren(Component component) {
-			return children.containsKey(component.getInternalID());
-		}
-		
-		@Override
-		public void removeChildren(Component component) {
-			if (!hasChildren(component)) return;
-			children.remove(component.getInternalID());
 		}
 		
 	}

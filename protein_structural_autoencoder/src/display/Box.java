@@ -1,11 +1,33 @@
 package display;
 
-public interface Box {
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-	public void addChildren(Component component);
+public class Box extends Item {
 	
-	public boolean hasChildren(Component component);
+	private Map<String,Component> children = new LinkedHashMap<>();
+
+	public void addChildren(Component component) {
+		children.put(component.getInternalID(), component);
+	}
 	
-	public void removeChildren(Component component);
+	public boolean hasChildren(Component component) {
+		return children.containsKey(component.getInternalID());
+	}
+	
+	public void removeChildren(Component component) {
+		if (!hasChildren(component)) return;
+		children.remove(component.getInternalID());
+	}
+	
+	public void clearChildren() {
+		children.clear();
+	}
+	
+	protected void drawChildren() {
+		for (Map.Entry<String,Component> entry : children.entrySet()) {
+			entry.getValue().update();
+		}
+	}
 	
 }

@@ -5,7 +5,7 @@ import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 
-public class Button extends Component {
+public class Button extends Item {
 
 	private String text = "Button";
 	private ImVec2 size = new ImVec2(0.0f,0.0f);
@@ -19,7 +19,6 @@ public class Button extends Component {
 	private boolean isfullWidth  = false;
 	private boolean isfullHeight = false;
 	
-	private boolean isHovered = false;
 	
 	public Button(String text) {
 		this.text = text;
@@ -27,13 +26,7 @@ public class Button extends Component {
 	
 	
 	
-	public void setBindingOnMouseIn(display.event.Callback c) {
-		eventManager.register("mousein", c);
-	}
-	
-	public void setBindingOnMouseOut(display.event.Callback c) {
-		eventManager.register("mouseout", c);
-	}
+
 	
 	
 	
@@ -120,20 +113,7 @@ public class Button extends Component {
 		ImVec2 regionSize = getContentRegionSize();
 		ImGui.button(text,isfullWidth?regionSize.x:size.x,isfullHeight?regionSize.y:size.y);
 		
-		
-		/* track internal imgui event */
-		boolean s_isHovered = isHovered;
-		isHovered = ImGui.isItemHovered();
-		
-		/* propagate only if internal state changed */
-		if (s_isHovered != isHovered) {
-			if (isHovered) {
-				eventManager.fire("mousein");
-			} else {
-				eventManager.fire("mouseout");
-			}
-		}
-		
+		propagateEvents();
 		
 		ImGui.popStyleColor(pushstyle);
 		
