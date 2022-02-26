@@ -1,4 +1,4 @@
-package Autoencoder;
+package autoencoder;
 
 public class Autoencoder {
 

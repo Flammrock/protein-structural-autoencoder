@@ -1,4 +1,4 @@
-package Autoencoder;
+package autoencoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

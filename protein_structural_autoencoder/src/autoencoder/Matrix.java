@@ -1,4 +1,4 @@
-package Autoencoder;
+package autoencoder;
 
 final public class Matrix {
     private final int M;             // number of rows
