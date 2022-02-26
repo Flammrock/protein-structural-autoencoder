@@ -88,5 +88,27 @@
 	<classpathentry kind="lib" path="lib/imgui/imgui-java-natives-windows-x86-ft-1.82.2.jar"/>
 	<classpathentry kind="lib" path="lib/joml/joml-1.10.3.jar"/>
 	<classpathentry kind="lib" path="lib/joml/joml-1.10.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-linux.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-linux-arm32.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-linux-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-macos.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-macos-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-windows-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-nfd-sources.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-linux.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-linux-arm32.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-linux-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-macos.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-macos-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-windows-arm64.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-natives-windows-x86.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-tinyfd-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
