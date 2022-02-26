@@ -4,6 +4,7 @@ package display.internal;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_messageBox;
 
 import java.util.function.Consumer;
 import org.lwjgl.opengl.GL;

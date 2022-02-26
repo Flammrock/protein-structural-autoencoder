@@ -1,6 +1,13 @@
 package protein_structural_autoencoder;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Objects;
+
 import org.joml.Vector3f;
 
 import bio.*;
@@ -11,6 +18,34 @@ import imgui.extension.implot.ImPlot;
 import imgui.ImGui;
 import imgui.ImVec4;
 import imgui.type.ImBoolean;
+import system.ResourceManager;
+
+import static org.lwjgl.util.tinyfd.TinyFileDialogs.*;
+
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_messageBox;
+
+import java.util.function.Consumer;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import static org.lwjgl.system.MemoryStack.*;
+
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+
+import java.nio.*;
+import java.util.*;
+
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.system.MemoryUtil.*;
+
 
 public class App extends Application {
 
@@ -19,6 +54,15 @@ public class App extends Application {
 	public Gui gui = new Gui();
 	
 	public static void main(String[] args) {
+		
+		
+		
+		ResourceManager.setup();
+		
+		List<File> files = ResourceManager.getResourceFiles("protein");
+		for (File f : files) {
+			System.out.println(f.getName());
+		}
 		
 		//Protein p = Protein.buildFromFile("data.txt");
 		
@@ -73,8 +117,10 @@ public class App extends Application {
 		System.out.println("1er élement du 2éme fragment (Id):"+LF.get(2).getResidues().get(0).getID());
 		System.out.println("2eme élement du 2éme fragment (Id):"+LF.get(2).getResidues().get(1).getID());
 		System.out.println("(0 2) :"+ CM.atomes[0][2]);*/
+		
+				
+		//tinyfd_messageBox("ho", "hmmm", "ok", "info", true);
 	}
-	
 	
 	
 	
@@ -94,6 +140,7 @@ public class App extends Application {
 		Protein.setBindingOnLoadEnd((Sender sender, Data data) -> {
 			Protein p = (Protein) data.get();
 			gui.log(Console.Level.Success,"[LOAD] Protein `"+p.getOriginalFilename()+"` successfully loaded!");
+			
 		});
 		
 		Atom.setBindingOnLoad((Sender sender, Data data) -> {
@@ -132,8 +179,8 @@ public class App extends Application {
 		super.onInit();
 		
 		
-		gui.loadProtein("data.txt");
-		gui.loadProtein("data2.txt");
+		gui.loadProtein("1k4ia.atm");
+		gui.loadProtein("1llwa.atm");
 		
 		
 		

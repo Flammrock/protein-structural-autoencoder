@@ -1,27 +1,19 @@
 package bio;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.joml.Vector3f;
-
 import display.event.Callback;
 import display.event.Manager;
-import display.eventtypes.AtomLoadEvent;
 import display.eventtypes.ProteinLoadEndEvent;
 import display.eventtypes.ProteinLoadStartEvent;
 import display.internal.Color;
 import display.internal.Container;
-import display.internal.CylinderGeometry;
-import display.internal.Material;
-import display.internal.Mesh;
-import display.internal.QuaternionHelper;
-import display.internal.SphereGeometry;
-
+import system.Resource;
 import bio.pdb.Record;
 
 public class Protein {
@@ -71,25 +63,26 @@ public class Protein {
 		numAtoms = pos;
 	}
 	
-	public static Protein buildFromFile(String filename) {
+	public static Protein buildFromResource(Resource res) throws IOException {
 		Protein p = null;
 		eventManager.fire(new ProteinLoadStartEvent().setData(p));
-		BufferedReader reader = new BufferedReader(new InputStreamReader(Protein.class.getResourceAsStream(filename)));
-		p = new Protein(
-			filename,
-			reader.lines()
-			.filter(Record.is(Record.ATOM))
-			.map(Atom::load)
-			.collect(Collectors.groupingBy(
-				Atom::getResidueID
-			))
-			.entrySet().stream()
-			.map(entry -> Residue.build(entry.getKey(),entry.getValue()))
-			.collect(Collectors.toList())
-		)
-		;
-		eventManager.fire(new ProteinLoadEndEvent().setData(p));
-		return p;
+		try (BufferedReader buffer = res.getBuffer()) {
+			p = new Protein(
+				res.getName(),
+				buffer.lines()
+				.filter(Record.is(Record.ATOM))
+				.map(Atom::load)
+				.collect(Collectors.groupingBy(
+					Atom::getResidueID
+				))
+				.entrySet().stream()
+				.map(entry -> Residue.build(entry.getKey(),entry.getValue()))
+				.collect(Collectors.toList())
+			)
+			;
+			eventManager.fire(new ProteinLoadEndEvent().setData(p));
+			return p;
+		}
 	}
 	
 	public List<Residue> getResidues() {

@@ -1,5 +1,7 @@
 package protein_structural_autoencoder;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -23,6 +25,7 @@ import display.internal.Scene;
 import display.internal.SceneManager;
 import imgui.ImGui;
 import imgui.ImVec2;
+import system.ResourceManager;
 
 public class Gui extends UI {
 	
@@ -167,10 +170,21 @@ public class Gui extends UI {
 
 	public void loadProtein(String filename) {
 		
-		Protein p = Protein.buildFromFile(filename);
+		Protein p = null;
+		try {
+			p = Protein.buildFromResource(ResourceManager.getResourceAsStream("Protein/" + filename));
+		} catch (FileNotFoundException e) {
+			log(Console.Level.Error, "[ERROR] Resource `"+filename+"` not found.");
+		} catch (IOException e) {
+			log(Console.Level.Error, "[ERROR] Unable to load `"+filename+"`.");
+		}
 		
-		Container proteinMesh = p.getMesh();
-		Container proteinBackboneMesh = p.getBackboneMesh();
+		if (p==null) return;
+		
+		Protein refp = p;
+		
+		Container proteinMesh = refp.getMesh();
+		Container proteinBackboneMesh = refp.getBackboneMesh();
 		
 		WindowPanel panel = new WindowPanel();
 		panel.setTitle("Protein `"+filename+"`");
@@ -178,7 +192,7 @@ public class Gui extends UI {
 		panel.setDockerSpace(new DockerSpace.Builder().build());
 		
 		panel.setBindingOnFocus((display.event.Sender sender, display.event.Data data) -> {
-			setView(p);
+			setView(refp);
 		});
 		
 		
