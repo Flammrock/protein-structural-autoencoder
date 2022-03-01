@@ -1,4 +1,4 @@
-package autoencoder;
+package dataflow.mds;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.joml.Vector2f;
 
+import dataflow.Matrix;
 import display.helper.ArrayUtils;
 
 public class MultidimensionalScaling {

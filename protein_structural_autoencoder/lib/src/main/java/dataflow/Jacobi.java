@@ -1,9 +1,11 @@
-package autoencoder;
+package dataflow;
+
+import dataflow.mds.EigenResult;
 
 // https://www.patnauniversity.ac.in/e-content/science/physics/MScPhy58.pdf
 // https://github.com/kllaas/JacobiAlgorithm
 
-class Jacobi {
+public class Jacobi {
 
 	private double e;
     private Matrix A;

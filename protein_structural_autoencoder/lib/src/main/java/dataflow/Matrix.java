@@ -1,4 +1,6 @@
-package autoencoder;
+package dataflow;
+
+import dataflow.mds.EigenResult;
 
 final public class Matrix {
     private final int M;             // number of rows
@@ -6,9 +8,9 @@ final public class Matrix {
     private final double[][] data;   // M-by-N array
     
     public class Cell {
-    	double val;
-        int i;
-        int j;
+    	public double val;
+        public int i;
+        public int j;
 
         public Cell(double val, int i, int j) {
             this.val = val;

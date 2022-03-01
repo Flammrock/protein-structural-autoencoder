@@ -8,6 +8,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import dataflow.Matrix;
+import dataflow.mds.MultidimensionalScaling;
+
 class MultidimensionalScalingTest {
 
 	static Stream<Arguments> test() {

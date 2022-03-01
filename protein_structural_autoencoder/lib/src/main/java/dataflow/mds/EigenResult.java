@@ -1,4 +1,6 @@
-package autoencoder;
+package dataflow.mds;
+
+import dataflow.Matrix;
 
 public class EigenResult {
 
