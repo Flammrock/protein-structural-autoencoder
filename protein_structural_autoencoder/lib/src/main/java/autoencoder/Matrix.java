@@ -49,6 +49,24 @@ final public class Matrix {
             for (int j = 0; j < N; j++)
                     this.data[i][j] = data[i][j];
     }
+    
+    public Matrix(float[][] data) {
+        M = data.length;
+        N = data[0].length;
+        this.data = new double[M][N];
+        for (int i = 0; i < M; i++)
+            for (int j = 0; j < N; j++)
+                    this.data[i][j] = data[i][j];
+    }
+    
+    public Matrix(Number[][] data) {
+        M = data.length;
+        N = data[0].length;
+        this.data = new double[M][N];
+        for (int i = 0; i < M; i++)
+            for (int j = 0; j < N; j++)
+                    this.data[i][j] = data[i][j].doubleValue();
+    }
 
     // copy constructor
     public Matrix(Matrix A) { this(A.data); }
@@ -221,14 +239,14 @@ final public class Matrix {
 	}
 	
 	public Double[] getColumn(int j) {
-		Double[] values = new Double[N];
-		for (int i = 0; i < N; i++) values[i] = data[i][j];
+		Double[] values = new Double[M];
+		for (int i = 0; i < M; i++) values[i] = data[i][j];
 		return values;
 	}
 	
 	public Double[] getLine(int i) {
-		Double[] values = new Double[M];
-		for (int j = 0; j < M; j++) values[j] = data[i][j];
+		Double[] values = new Double[N];
+		for (int j = 0; j < N; j++) values[j] = data[i][j];
 		return values;
 	}
 	
